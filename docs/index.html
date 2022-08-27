@@ -12,7 +12,42 @@
     <div class="nx-header-flag-1"></div>
     <div class="nx-header-flag-2"></div>
     <div class="nx-header-title"><a href="/">🌻</a> Home Page of the Perl Wasm Project</div>
-    <p>This will soon have some more detail about the Perl WebAssembly Project!</p>
+    <p>The goal of the Perl Wasm project is for Perl and WebAssembly to be able to call each other transparently
+without having to know or care which module is implemented ion which langauge.  Using <a href="/pod/Wasm.html" class="module">Wasm</a>, Perl
+subroutines and WebAssembly functions can easily be imported and exported between both Perl and WebAssembly.</p>
+
+<p><pre class="sh_perl">package MathStuff; 
+use strict;
+use warnings;
+use base qw( Exporter );
+use Wasm
+  -api =&gt; 0,
+  -exporter =&gt; 'ok',
+  -wat =&gt; q{
+    (module
+      (func (export "add") (param i32 i32) (result i32)
+        local.get 0
+        local.get 1
+        i32.add)
+      (func (export "subtract") (param i32 i32) (result i32)
+        local.get 0
+        local.get 1
+        i32.sub)
+      (memory (export "frooble") 2 3)
+    )
+  };
+1;
+</pre></p>
+
+<p><pre class="sh_perl">use MathStuff qw( add subtract );
+print add(1,2), "\n";      # prints 3
+print subtract(3,2), "\n", # prints 1
+</pre></p>
+
+<p>The current implementation uses <a href="https://wasmtime.dev/">wasmtime.dev</a>.  The API is structured on two levels.
+The module <a href="/pod/Wasm.html" class="module">Wasm</a> allows simply importing WebAssembly functions into your Perl code without having to know
+or care about the lowerlevel <a href="/pod/Wasm/Wasmtime.html" class="module">Wasm::Wasmtime</a>.  <a href="/pod/Wasm/Wasmtime.html" class="module">Wasm::Wasmtime</a> in contrast provides a powerful low level
+interface for interacting with WebAssembly.</p>
 
 <h2>Resources hosted here</h2>
 
@@ -23,8 +58,8 @@
 <h2>External Links</h2>
 
 <ul>
-<li><a href="https://kiwiirc.com/nextclient/#irc://irc.perl.org/#native?nick=mc-guest-?">#native on irc.perl.org</a></li>
-<li><a href="https://github.com/perlwasm">perlwasm organization on GitHub</a></li>
+<li>#️⃣ <a href="https://kiwiirc.com/nextclient/#irc://irc.perl.org/#native?nick=mc-guest-?">#native on irc.perl.org</a></li>
+<li>🌏 <a href="https://github.com/perlwasm">perlwasm organization on GitHub</a></li>
 </ul>
 
 
