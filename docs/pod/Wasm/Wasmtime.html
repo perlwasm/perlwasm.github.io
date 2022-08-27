@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wasm::Wasmtime</title>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/sh_main.min.js"></script>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/lang/sh_perl.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://shjs.wdlabs.com/css/sh_acid.css">
+    <link type="text/css" rel="stylesheet" href="/css/default.css">
+  </head>
+  <body onload="sh_highlightDocument();">
+    <div class="nx-header-flag-1"></div>
+    <div class="nx-header-flag-2"></div>
+    <div class="nx-header-title"><a href="/">🌻</a> <a href="/pod/">📖</a> <a href="/pod/Wasm.html">Wasm</a>::Wasmtime</div>
+    <!--Wasm::Wasmtime--><a name='___top' class='dummyTopAnchor' ></a>
+
+<div class='indexgroup'>
+<ul   class='indexList indexList1'>
+  <li class='indexItem indexItem1'><a href='#NAME'>NAME</a>
+  <li class='indexItem indexItem1'><a href='#VERSION'>VERSION</a>
+  <li class='indexItem indexItem1'><a href='#SYNOPSIS'>SYNOPSIS</a>
+  <li class='indexItem indexItem1'><a href='#DESCRIPTION'>DESCRIPTION</a>
+  <li class='indexItem indexItem1'><a href='#ENVIRONMENT'>ENVIRONMENT</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#PERL_WASM_WASMTIME_MEMORY'>PERL_WASM_WASMTIME_MEMORY</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
+  <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
+  <li class='indexItem indexItem1'><a href='#COPYRIGHT_AND_LICENSE'>COPYRIGHT AND LICENSE</a>
+</ul>
+</div>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="NAME"
+>NAME</a></h1>
+
+<p>Wasm::Wasmtime - Perl interface to Wasmtime</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="VERSION"
+>VERSION</a></h1>
+
+<p>version 0.21</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SYNOPSIS"
+>SYNOPSIS</a></h1>
+
+<pre class="sh_perl"> use Wasm::Wasmtime;
+ use PeekPoke::FFI qw( poke );
+ 
+ my $store = Wasm::Wasmtime::Store-&#62;new;
+ 
+ my $module = Wasm::Wasmtime::Module-&#62;new($store-&#62;engine, wat =&#62; q{
+   (module
+ 
+     ;; callback we can make back into perl space
+     (func $hello (import &#34;&#34; &#34;hello&#34;))
+     (func (export &#34;call_hello&#34;) (call $hello))
+ 
+     ;; plain WebAssembly function that we can call from Perl
+     (func (export &#34;gcd&#34;) (param i32 i32) (result i32)
+       (local i32)
+       block  ;; label = @1
+         block  ;; label = @2
+           local.get 0
+           br_if 0 (;@2;)
+           local.get 1
+           local.set 2
+           br 1 (;@1;)
+         end
+         loop  ;; label = @2
+           local.get 1
+           local.get 0
+           local.tee 2
+           i32.rem_u
+           local.set 0
+           local.get 2
+           local.set 1
+           local.get 0
+           br_if 0 (;@2;)
+         end
+       end
+       local.get 2
+     )
+ 
+     ;; memory region that can be accessed from
+     ;; either Perl or WebAssembly
+     (memory (export &#34;memory&#34;) 2 3)
+     (func (export &#34;load&#34;) (param i32) (result i32)
+       (i32.load8_s (local.get 0))
+     )
+ 
+   )
+ });
+ 
+ sub hello
+ {
+   print &#34;hello world!\n&#34;;
+ }
+ 
+ my $instance = Wasm::Wasmtime::Instance-&#62;new( $module, $store, [\&#38;hello] );
+ 
+ # call a WebAssembly function that calls back into Perl space
+ $instance-&#62;exports-&#62;call_hello;
+ 
+ # call plain WebAssembly function
+ my $gcd = $instance-&#62;exports-&#62;gcd;
+ print $gcd-&#62;(6,27), &#34;\n&#34;;      # 3
+ 
+ # write to memory from Perl and read it from WebAssembly
+ my $memory = $instance-&#62;exports-&#62;memory;
+ poke($memory-&#62;data + 10, 42);  # set offset 10 to 42
+ my $load = $instance-&#62;exports-&#62;load;
+ print $load-&#62;(10), &#34;\n&#34;;       # 42
+ poke($memory-&#62;data + 10, 52);  # set offset 10 to 52
+ print $load-&#62;(10), &#34;\n&#34;;       # 52</pre>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="DESCRIPTION"
+>DESCRIPTION</a></h1>
+
+<p><b>WARNING</b>: WebAssembly and Wasmtime are a moving target and the interface for these modules is under active development. Use with caution.</p>
+
+<p>This module pre-loads all the relevant Wasmtime modules so that you can just start using the appropriate classes.</p>
+
+<p>If you are just getting your feet wet with WebAssembly and Perl then you probably want to take a look at <a href="/pod/Wasm.html" class="podlinkpod"
+>Wasm</a>, which is a simple interface that automatically imports functions from Wasm space into Perl space.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="ENVIRONMENT"
+>ENVIRONMENT</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="PERL_WASM_WASMTIME_MEMORY"
+>PERL_WASM_WASMTIME_MEMORY</a></h2>
+
+<p>This environment variable, if set, should be a colon separated list of values for <code>static_memory_maximum_size</code>, <code>static_memory_guard_size</code> and <code>dynamic_memory_guard_size</code>. See <a href="/pod/Wasm/Wasmtime/Config.html" class="podlinkpod"
+>Wasm::Wasmtime::Config</a> for more details on these limits.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SEE_ALSO"
+>SEE ALSO</a></h1>
+
+<dl>
+<dt><a name="Wasm"
+><a href="/pod/Wasm.html" class="podlinkpod"
+>Wasm</a></a></dt>
+
+<dd>
+<p>Simplified interface to WebAssembly that imports WebAssembly functions into Perl space.</p>
+
+<dt><a name="Wasm::Wasmtime::Module"
+><a href="/pod/Wasm/Wasmtime/Module.html" class="podlinkpod"
+>Wasm::Wasmtime::Module</a></a></dt>
+
+<dd>
+<p>Interface to WebAssembly module.</p>
+
+<dt><a name="Wasm::Wasmtime::Instance"
+><a href="/pod/Wasm/Wasmtime/Instance.html" class="podlinkpod"
+>Wasm::Wasmtime::Instance</a></a></dt>
+
+<dd>
+<p>Interface to a WebAssembly module instance.</p>
+
+<dt><a name="Wasm::Wasmtime::Func"
+><a href="/pod/Wasm/Wasmtime/Func.html" class="podlinkpod"
+>Wasm::Wasmtime::Func</a></a></dt>
+
+<dd>
+<p>Interface to WebAssembly function.</p>
+
+<dt><a name="Wasm::Wasmtime::Linker"
+><a href="/pod/Wasm/Wasmtime/Linker.html" class="podlinkpod"
+>Wasm::Wasmtime::Linker</a></a></dt>
+
+<dd>
+<p>Link together multiple WebAssembly modules into one program.</p>
+
+<dt><a name="Wasm::Wasmtime::Wat2Wasm"
+><a href="/pod/Wasm/Wasmtime/Wat2Wasm.html" class="podlinkpod"
+>Wasm::Wasmtime::Wat2Wasm</a></a></dt>
+
+<dd>
+<p>Tool to convert WebAssembly Text (WAT) to WebAssembly binary (Wasm).</p>
+
+<dt><a name="Wasm::Wasmtime::WasiInstance"
+><a href="/pod/Wasm/Wasmtime/WasiInstance.html" class="podlinkpod"
+>Wasm::Wasmtime::WasiInstance</a></a></dt>
+
+<dd>
+<p>WebAssembly System Interface (WASI).</p>
+
+<dt><a name="https://github.com/bytecodealliance/wasmtime"
+><a href="https://github.com/bytecodealliance/wasmtime" class="podlinkurl"
+>https://github.com/bytecodealliance/wasmtime</a></a></dt>
+
+<dd>
+<p>The rust library used by this module, via its C API, via FFI.</p>
+
+<dt><a name="https://github.com/bytecodealliance/wasmtime-py"
+><a href="https://github.com/bytecodealliance/wasmtime-py" class="podlinkurl"
+>https://github.com/bytecodealliance/wasmtime-py</a></a></dt>
+
+<dd>
+<p>These bindings here heavily influenced by the Python Wasmtime bindings.</p>
+</dd>
+</dl>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="AUTHOR"
+>AUTHOR</a></h1>
+
+<p>Graham Ollis &#60;plicease@cpan.org&#62;</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="COPYRIGHT_AND_LICENSE"
+>COPYRIGHT AND LICENSE</a></h1>
+
+<p>This software is copyright (c) 2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+    <div class="nx-footer">
+      <p>Copyright &copy; 2022 Graham Ollis</p>
+    </div>
+  </body>
+</html>

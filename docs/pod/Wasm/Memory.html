@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wasm::Memory</title>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/sh_main.min.js"></script>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/lang/sh_perl.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://shjs.wdlabs.com/css/sh_acid.css">
+    <link type="text/css" rel="stylesheet" href="/css/default.css">
+  </head>
+  <body onload="sh_highlightDocument();">
+    <div class="nx-header-flag-1"></div>
+    <div class="nx-header-flag-2"></div>
+    <div class="nx-header-title"><a href="/">🌻</a> <a href="/pod/">📖</a> <a href="/pod/Wasm.html">Wasm</a>::Memory</div>
+    <!--Wasm::Memory--><a name='___top' class='dummyTopAnchor' ></a>
+
+<div class='indexgroup'>
+<ul   class='indexList indexList1'>
+  <li class='indexItem indexItem1'><a href='#NAME'>NAME</a>
+  <li class='indexItem indexItem1'><a href='#VERSION'>VERSION</a>
+  <li class='indexItem indexItem1'><a href='#SYNOPSIS'>SYNOPSIS</a>
+  <li class='indexItem indexItem1'><a href='#DESCRIPTION'>DESCRIPTION</a>
+  <li class='indexItem indexItem1'><a href='#FUNCTIONS'>FUNCTIONS</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#wasm_caller_memory'>wasm_caller_memory</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#METHODS'>METHODS</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#address'>address</a>
+    <li class='indexItem indexItem2'><a href='#size'>size</a>
+    <li class='indexItem indexItem2'><a href='#limits'>limits</a>
+    <li class='indexItem indexItem2'><a href='#grow'>grow</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
+  <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
+  <li class='indexItem indexItem1'><a href='#COPYRIGHT_AND_LICENSE'>COPYRIGHT AND LICENSE</a>
+</ul>
+</div>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="NAME"
+>NAME</a></h1>
+
+<p>Wasm::Memory - Interface to WebAssembly Memory</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="VERSION"
+>VERSION</a></h1>
+
+<p>version 0.21</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SYNOPSIS"
+>SYNOPSIS</a></h1>
+
+<p>Use WebAssembly memory from plain Perl:</p>
+
+<pre class="sh_perl"> use PeekPoke::FFI qw( peek poke );
+ use Wasm
+   -api =&#62; 0,
+   -wat =&#62; q{
+     (module
+       (memory (export &#34;memory&#34;) 3 9)
+     )
+   }
+ ;
+ 
+ # $memory isa Wasm::Memory
+ poke($memory-&#62;address + 10, 42);                # store the byte 42 at offset
+                                                 # 10 inside the data region
+ 
+ my($current, $min, $max) = $memory-&#62;limits;
+ printf &#34;size    = %x\n&#34;, $memory-&#62;size;         # 30000
+ printf &#34;current = %d\n&#34;, $current;              # 3
+ printf &#34;min     = %d\n&#34;, $min;                  # 3
+ printf &#34;max     = %d\n&#34;, $max;                  # 9
+ 
+ $memory-&#62;grow(4);                               # increase data region by 4 pages
+ 
+ ($current, $min, $max) = $memory-&#62;limits;
+ printf &#34;size    = %x\n&#34;, $memory-&#62;size;         # 70000
+ printf &#34;current = %d\n&#34;, $current;              # 7
+ printf &#34;min     = %d\n&#34;, $min;                  # 3
+ printf &#34;max     = %d\n&#34;, $max;                  # 9</pre>
+
+<p>Use WebAssembly memory from Perl in callback from WebAssembly:</p>
+
+<pre class="sh_perl"> use Wasm::Memory qw( wasm_caller_memory );
+ 
+ {
+   # this just uses Platypus to create a utility function
+   # to convert a pointer to a C string into a Perl string.
+   use FFI::Platypus 1.00;
+   my $ffi = FFI::Platypus-&#62;new( api =&#62; 1 );
+   $ffi-&#62;attach_cast( &#39;cstring&#39; =&#62; &#39;opaque&#39; =&#62; &#39;string&#39; );
+ }
+ 
+ sub print_wasm_string
+ {
+   my $ptr = shift;
+   my $memory = wasm_caller_memory;
+   print cstring($ptr + $memory-&#62;address);
+ }
+ 
+ use Wasm
+   -api =&#62; 0,
+   -wat =&#62; q{
+     (module
+       (import &#34;main&#34; &#34;print_wasm_string&#34; (func $print_wasm_string (param i32)))
+       (func (export &#34;run&#34;)
+         i32.const 0
+         call $print_wasm_string
+       )
+       (memory (export &#34;memory&#34;) 1)
+       (data (i32.const 0) &#34;Hello, world!\n\00&#34;)
+     )
+   },
+ ;
+ 
+ run();</pre>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="DESCRIPTION"
+>DESCRIPTION</a></h1>
+
+<p><b>WARNING</b>: WebAssembly and Wasmtime are a moving target and the interface for these modules is under active development. Use with caution.</p>
+
+<p>This class represents a region of memory exported from a WebAssembly module. A <a href="/pod/Wasm/Memory.html" class="podlinkpod"
+>Wasm::Memory</a> instance is automatically imported into Perl space for each WebAssembly memory region with the same name.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="FUNCTIONS"
+>FUNCTIONS</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="wasm_caller_memory"
+>wasm_caller_memory</a></h2>
+
+<pre class="sh_perl"> my $memory = wasm_caller_memory;</pre>
+
+<p>Returns the memory region of the WebAssembly caller, if Perl has been called by Wasm, otherwise it returns <code>undef</code>.</p>
+
+<p>This function can be exported by request via <a href="https://metacpan.org/pod/Exporter" class="podlinkpod"
+>Exporter</a>.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="METHODS"
+>METHODS</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="address"
+>address</a></h2>
+
+<pre class="sh_perl"> my $pointer = $memory-&#62;address;</pre>
+
+<p>Returns an opaque pointer to the start of memory.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="size"
+>size</a></h2>
+
+<pre class="sh_perl"> my $size = $memory-&#62;size;</pre>
+
+<p>Returns the size of the memory in bytes.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="limits"
+>limits</a></h2>
+
+<pre class="sh_perl"> my($current, $min, $max) = $memory-&#62;limits;</pre>
+
+<p>Returns the current memory limit, the minimum and maximum. All sizes are in pages.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="grow"
+>grow</a></h2>
+
+<pre class="sh_perl"> $memory-&#62;grow($count);</pre>
+
+<p>Grown the memory region by <code>$count</code> pages.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SEE_ALSO"
+>SEE ALSO</a></h1>
+
+<dl>
+<dt><a name="Wasm"
+><a href="/pod/Wasm.html" class="podlinkpod"
+>Wasm</a></a></dt>
+</dl>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="AUTHOR"
+>AUTHOR</a></h1>
+
+<p>Graham Ollis &#60;plicease@cpan.org&#62;</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="COPYRIGHT_AND_LICENSE"
+>COPYRIGHT AND LICENSE</a></h1>
+
+<p>This software is copyright (c) 2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+    <div class="nx-footer">
+      <p>Copyright &copy; 2022 Graham Ollis</p>
+    </div>
+  </body>
+</html>

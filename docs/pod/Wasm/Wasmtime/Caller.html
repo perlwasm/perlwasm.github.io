@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wasm::Wasmtime::Caller</title>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/sh_main.min.js"></script>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/lang/sh_perl.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://shjs.wdlabs.com/css/sh_acid.css">
+    <link type="text/css" rel="stylesheet" href="/css/default.css">
+  </head>
+  <body onload="sh_highlightDocument();">
+    <div class="nx-header-flag-1"></div>
+    <div class="nx-header-flag-2"></div>
+    <div class="nx-header-title"><a href="/">🌻</a> <a href="/pod/">📖</a> <a href="/pod/Wasm.html">Wasm</a>::<a href="/pod/Wasm/Wasmtime.html">Wasmtime</a>::Caller</div>
+    <!--Wasm::Wasmtime::Caller--><a name='___top' class='dummyTopAnchor' ></a>
+
+<div class='indexgroup'>
+<ul   class='indexList indexList1'>
+  <li class='indexItem indexItem1'><a href='#NAME'>NAME</a>
+  <li class='indexItem indexItem1'><a href='#VERSION'>VERSION</a>
+  <li class='indexItem indexItem1'><a href='#SYNOPSIS'>SYNOPSIS</a>
+  <li class='indexItem indexItem1'><a href='#DESCRIPTION'>DESCRIPTION</a>
+  <li class='indexItem indexItem1'><a href='#FUNCTIONS'>FUNCTIONS</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#wasmtime_caller'>wasmtime_caller</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#METHODS'>METHODS</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#export_get'>export_get</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
+  <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
+  <li class='indexItem indexItem1'><a href='#COPYRIGHT_AND_LICENSE'>COPYRIGHT AND LICENSE</a>
+</ul>
+</div>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="NAME"
+>NAME</a></h1>
+
+<p>Wasm::Wasmtime::Caller - Wasmtime caller interface</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="VERSION"
+>VERSION</a></h1>
+
+<p>version 0.21</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SYNOPSIS"
+>SYNOPSIS</a></h1>
+
+<pre class="sh_perl"> use Wasm::Wasmtime;
+ use Wasm::Wasmtime::Caller qw( wasmtime_caller );
+ 
+ {
+   # this just uses Platypus to create a utility function
+   # to convert a pointer to a C string into a Perl string.
+   use FFI::Platypus 1.00;
+   my $ffi = FFI::Platypus-&#62;new( api =&#62; 1 );
+   $ffi-&#62;attach_cast( &#39;cstring&#39; =&#62; &#39;opaque&#39; =&#62; &#39;string&#39; );
+ }
+ 
+ sub print_wasm_string
+ {
+   my $ptr = shift;
+   my $caller = wasmtime_caller;
+   my $memory = $caller-&#62;export_get(&#39;memory&#39;);
+   print cstring($ptr + $memory-&#62;data);
+ }
+ 
+ my $store = Wasm::Wasmtime::Store-&#62;new;
+ my $instance = Wasm::Wasmtime::Instance-&#62;new(
+   Wasm::Wasmtime::Module-&#62;new($store-&#62;engine, wat =&#62; q{
+     (module
+       (import &#34;&#34; &#34;print_wasm_string&#34; (func $print_wasm_string (param i32)))
+       (func (export &#34;run&#34;)
+         i32.const 0
+         call $print_wasm_string
+       )
+       (memory (export &#34;memory&#34;) 1)
+       (data (i32.const 0) &#34;Hello, world!\n\00&#34;)
+     )
+   }),
+   $store,
+   [\&#38;print_wasm_string],
+ );
+ 
+ $instance-&#62;exports-&#62;run-&#62;();</pre>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="DESCRIPTION"
+>DESCRIPTION</a></h1>
+
+<p>This class represents the caller&#39;s context when calling a Perl <a href="/pod/Wasm/Wasmtime/Func.html" class="podlinkpod"
+>Wasm::Wasmtime::Func</a> from WebAssembly. The primary purpose of this structure is to provide access to the caller&#39;s exported memory. This allows functions which take pointers as arguments to easily read the memory the pointers point into.</p>
+
+<p>This is intended to be a pretty temporary mechanism for accessing the Caller&#39;s memory until interface types has been fully standardized and implemented.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="FUNCTIONS"
+>FUNCTIONS</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="wasmtime_caller"
+>wasmtime_caller</a></h2>
+
+<pre class="sh_perl"> my $caller = wasmtime_caller;
+ my $caller = wasmtime_caller $index;</pre>
+
+<p>This returns the current caller context (an instance of <a href="/pod/Wasm/Wasmtime/Caller.html" class="podlinkpod"
+>Wasm::Wasmtime::Caller</a>). If the current Perl code wasn&#39;t called from WebAssembly, then it will return <code>undef</code>. If <code>$index</code> is given, then that indicates how many WebAssembly call frames to go back before the current one. (This is vaguely similar to how the Perl <code>caller</code> function works).</p>
+
+<p>This function is exported by default using <a href="https://metacpan.org/pod/Exporter" class="podlinkpod"
+>Exporter</a>.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="METHODS"
+>METHODS</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="export_get"
+>export_get</a></h2>
+
+<pre class="sh_perl"> my $extern = $caller-&#62;export_get($name);</pre>
+
+<p>Returns the <a href="/pod/Wasm/Wasmtime/Extern.html" class="podlinkpod"
+>Wasm::Wasmtime::Extern</a> for the named export <code>$name</code>. As of this writing, only <a href="/pod/Wasm/Wasmtime/Memory.html" class="podlinkpod"
+>Wasm::Wasmtime::Memory</a> types are supported.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SEE_ALSO"
+>SEE ALSO</a></h1>
+
+<dl>
+<dt><a name="Wasm"
+><a href="/pod/Wasm.html" class="podlinkpod"
+>Wasm</a></a></dt>
+
+<dd>
+<dt><a name="Wasm::Wasmtime"
+><a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a></a></dt>
+</dl>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="AUTHOR"
+>AUTHOR</a></h1>
+
+<p>Graham Ollis &#60;plicease@cpan.org&#62;</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="COPYRIGHT_AND_LICENSE"
+>COPYRIGHT AND LICENSE</a></h1>
+
+<p>This software is copyright (c) 2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+    <div class="nx-footer">
+      <p>Copyright &copy; 2022 Graham Ollis</p>
+    </div>
+  </body>
+</html>

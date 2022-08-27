@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wasm::Wasmtime::Linker</title>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/sh_main.min.js"></script>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/lang/sh_perl.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://shjs.wdlabs.com/css/sh_acid.css">
+    <link type="text/css" rel="stylesheet" href="/css/default.css">
+  </head>
+  <body onload="sh_highlightDocument();">
+    <div class="nx-header-flag-1"></div>
+    <div class="nx-header-flag-2"></div>
+    <div class="nx-header-title"><a href="/">🌻</a> <a href="/pod/">📖</a> <a href="/pod/Wasm.html">Wasm</a>::<a href="/pod/Wasm/Wasmtime.html">Wasmtime</a>::Linker</div>
+    <!--Wasm::Wasmtime::Linker--><a name='___top' class='dummyTopAnchor' ></a>
+
+<div class='indexgroup'>
+<ul   class='indexList indexList1'>
+  <li class='indexItem indexItem1'><a href='#NAME'>NAME</a>
+  <li class='indexItem indexItem1'><a href='#VERSION'>VERSION</a>
+  <li class='indexItem indexItem1'><a href='#SYNOPSIS'>SYNOPSIS</a>
+  <li class='indexItem indexItem1'><a href='#DESCRIPTION'>DESCRIPTION</a>
+  <li class='indexItem indexItem1'><a href='#CONSTRUCTOR'>CONSTRUCTOR</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#new'>new</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#METHODS'>METHODS</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#allow_shadowing'>allow_shadowing</a>
+    <li class='indexItem indexItem2'><a href='#define'>define</a>
+    <li class='indexItem indexItem2'><a href='#define_wasi'>define_wasi</a>
+    <li class='indexItem indexItem2'><a href='#define_instance'>define_instance</a>
+    <li class='indexItem indexItem2'><a href='#instantiate'>instantiate</a>
+    <li class='indexItem indexItem2'><a href='#get_one_by_name'>get_one_by_name</a>
+    <li class='indexItem indexItem2'><a href='#get_default'>get_default</a>
+    <li class='indexItem indexItem2'><a href='#store'>store</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
+  <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
+  <li class='indexItem indexItem1'><a href='#COPYRIGHT_AND_LICENSE'>COPYRIGHT AND LICENSE</a>
+</ul>
+</div>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="NAME"
+>NAME</a></h1>
+
+<p>Wasm::Wasmtime::Linker - Wasmtime linker class</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="VERSION"
+>VERSION</a></h1>
+
+<p>version 0.21</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SYNOPSIS"
+>SYNOPSIS</a></h1>
+
+<pre class="sh_perl"> use Wasm::Wasmtime;
+ 
+ my $store  = Wasm::Wasmtime::Store-&#62;new;
+ my $linker = Wasm::Wasmtime::Linker-&#62;new($store);
+ 
+ # Instanciate and define a WASI instance
+ my $wasi = Wasm::Wasmtime::WasiInstance-&#62;new(
+   $store,
+   &#34;wasi_snapshot_preview1&#34;,
+   Wasm::Wasmtime::WasiConfig
+     -&#62;new
+     -&#62;inherit_stdout
+ );
+ $linker-&#62;define_wasi($wasi);
+ 
+ # Create a logger module + instance
+ my $logger = $linker-&#62;instantiate(
+   Wasm::Wasmtime::Module-&#62;new(
+     $store-&#62;engine,
+     wat =&#62; q{
+       (module
+         (type $fd_write_ty (func (param i32 i32 i32 i32) (result i32)))
+         (import &#34;wasi_snapshot_preview1&#34; &#34;fd_write&#34; (func $fd_write (type $fd_write_ty)))
+ 
+         (func (export &#34;log&#34;) (param i32 i32)
+           ;; store the pointer in the first iovec field
+           i32.const 4
+           local.get 0
+           i32.store
+ 
+           ;; store the length in the first iovec field
+           i32.const 4
+           local.get 1
+           i32.store offset=4
+ 
+           ;; call the `fd_write` import
+           i32.const 1     ;; stdout fd
+           i32.const 4     ;; iovs start
+           i32.const 1     ;; number of iovs
+           i32.const 0     ;; where to write nwritten bytes
+           call $fd_write
+           drop
+         )
+ 
+         (memory (export &#34;memory&#34;) 2)
+         (global (export &#34;memory_offset&#34;) i32 (i32.const 65536))
+       )
+     },
+   )
+ );
+ $linker-&#62;define_instance(&#34;logger&#34;, $logger);
+ 
+ # Create a caller module + instance
+ my $caller = $linker-&#62;instantiate(
+   Wasm::Wasmtime::Module-&#62;new(
+     $store-&#62;engine,
+     wat =&#62; q{
+       (module
+         (import &#34;logger&#34; &#34;log&#34; (func $log (param i32 i32)))
+         (import &#34;logger&#34; &#34;memory&#34; (memory 1))
+         (import &#34;logger&#34; &#34;memory_offset&#34; (global $offset i32))
+ 
+         (func (export &#34;run&#34;)
+           ;; Our `data` segment initialized our imported memory, so let&#39;s print the
+           ;; string there now.
+           global.get $offset
+           i32.const 14
+           call $log
+         )
+ 
+         (data (global.get $offset) &#34;Hello, world!\n&#34;)
+       )
+     },
+   ),
+ );
+ $caller-&#62;exports-&#62;run-&#62;();</pre>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="DESCRIPTION"
+>DESCRIPTION</a></h1>
+
+<p><b>WARNING</b>: WebAssembly and Wasmtime are a moving target and the interface for these modules is under active development. Use with caution.</p>
+
+<p>This class represents a WebAssembly linker.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="CONSTRUCTOR"
+>CONSTRUCTOR</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="new"
+>new</a></h2>
+
+<pre class="sh_perl"> my $linker = Wasm::Wasmtime::Linker-&#62;new(
+   $store,        # Wasm::Wasmtime::Store
+ );</pre>
+
+<p>Create a new WebAssembly linker object.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="METHODS"
+>METHODS</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="allow_shadowing"
+>allow_shadowing</a></h2>
+
+<pre class="sh_perl"> $linker-&#62;allow_shadowing($bool);</pre>
+
+<p>Sets the allow shadowing property.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="define"
+>define</a></h2>
+
+<pre class="sh_perl"> $linker-&#62;define(
+   $module,
+   $name,
+   $extern,    # Wasm::Wasmtime::Extern
+ );</pre>
+
+<p>Define the given extern. You can use a func, global, table or memory object in its place and this method will get the extern for you.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="define_wasi"
+>define_wasi</a></h2>
+
+<pre class="sh_perl"> $linker-&#62;define_wasi(
+   $wasi,   # Wasm::Wasmtime::WasiInstance
+ );</pre>
+
+<p>Define WASI instance.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="define_instance"
+>define_instance</a></h2>
+
+<pre class="sh_perl"> $linker-&#62;define_instance(
+   $name,       # string
+   $instance,   # Wasm::Wasmtime::Instance
+ );</pre>
+
+<p>Define WebAssembly instance.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="instantiate"
+>instantiate</a></h2>
+
+<pre class="sh_perl"> my $instance = $linker-&#62;instantiate(
+   $module,
+ );</pre>
+
+<p>Instantiate the module using the linker. Returns the new <a href="/pod/Wasm/Wasmtime/Instance.html" class="podlinkpod"
+>Wasm::Wasmtime::Instance</a> object.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="get_one_by_name"
+>get_one_by_name</a></h2>
+
+<pre class="sh_perl"> my $extern = $linker-&#62;get_one_by_name($module,$name);</pre>
+
+<p>Returns the <a href="/pod/Wasm/Wasmtime/Extern.html" class="podlinkpod"
+>Wasm::Wasmtime::Extern</a> for the given <code>$module</code> and <code>$name</code>. <code>undef</code> is returned if there is no such extern with that <code>$name</code>.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="get_default"
+>get_default</a></h2>
+
+<pre class="sh_perl"> my $func = $linker-&#62;get_default($name);</pre>
+
+<p>Acquires the &#34;default export&#34; of the named module in this linker. Returns a <a href="/pod/Wasm/Wasmtime/Func.html" class="podlinkpod"
+>Wasm::Wasmtime::Func</a>.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="store"
+>store</a></h2>
+
+<pre class="sh_perl"> my $store = $linker-&#62;store;</pre>
+
+<p>Returns the <a href="/pod/Wasm/Wasmtime/Store.html" class="podlinkpod"
+>Wasm::Wasmtime::Store</a> for the linker.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SEE_ALSO"
+>SEE ALSO</a></h1>
+
+<dl>
+<dt><a name="Wasm"
+><a href="/pod/Wasm.html" class="podlinkpod"
+>Wasm</a></a></dt>
+
+<dd>
+<dt><a name="Wasm::Wasmtime"
+><a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a></a></dt>
+</dl>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="AUTHOR"
+>AUTHOR</a></h1>
+
+<p>Graham Ollis &#60;plicease@cpan.org&#62;</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="COPYRIGHT_AND_LICENSE"
+>COPYRIGHT AND LICENSE</a></h1>
+
+<p>This software is copyright (c) 2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+    <div class="nx-footer">
+      <p>Copyright &copy; 2022 Graham Ollis</p>
+    </div>
+  </body>
+</html>

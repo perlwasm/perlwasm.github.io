@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wasm</title>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/sh_main.min.js"></script>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/lang/sh_perl.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://shjs.wdlabs.com/css/sh_acid.css">
+    <link type="text/css" rel="stylesheet" href="/css/default.css">
+  </head>
+  <body onload="sh_highlightDocument();">
+    <div class="nx-header-flag-1"></div>
+    <div class="nx-header-flag-2"></div>
+    <div class="nx-header-title"><a href="/">🌻</a> <a href="/pod/">📖</a> Wasm</div>
+    <!--Wasm--><a name='___top' class='dummyTopAnchor' ></a>
+
+<div class='indexgroup'>
+<ul   class='indexList indexList1'>
+  <li class='indexItem indexItem1'><a href='#NAME'>NAME</a>
+  <li class='indexItem indexItem1'><a href='#VERSION'>VERSION</a>
+  <li class='indexItem indexItem1'><a href='#SYNOPSIS'>SYNOPSIS</a>
+  <li class='indexItem indexItem1'><a href='#DESCRIPTION'>DESCRIPTION</a>
+  <li class='indexItem indexItem1'><a href='#OPTIONS'>OPTIONS</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#-api'>-api</a>
+    <li class='indexItem indexItem2'><a href='#-exporter'>-exporter</a>
+    <li class='indexItem indexItem2'><a href='#-file'>-file</a>
+    <li class='indexItem indexItem2'><a href='#-global'>-global</a>
+    <li class='indexItem indexItem2'><a href='#-package'>-package</a>
+    <li class='indexItem indexItem2'><a href='#-self'>-self</a>
+    <li class='indexItem indexItem2'><a href='#-wat'>-wat</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#GLOBALS'>GLOBALS</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#%25Wasm%3A%3AWASM'>%Wasm::WASM</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#CAVEATS'>CAVEATS</a>
+  <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
+  <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
+  <li class='indexItem indexItem1'><a href='#COPYRIGHT_AND_LICENSE'>COPYRIGHT AND LICENSE</a>
+</ul>
+</div>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="NAME"
+>NAME</a></h1>
+
+<p>Wasm - Write Perl extensions using Wasm</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="VERSION"
+>VERSION</a></h1>
+
+<p>version 0.21</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SYNOPSIS"
+>SYNOPSIS</a></h1>
+
+<p>lib/MathStuff.pm:</p>
+
+<pre class="sh_perl"> package MathStuff;
+ 
+ use strict;
+ use warnings;
+ use base qw( Exporter );
+ use Wasm
+   -api =&#62; 0,
+   -exporter =&#62; &#39;ok&#39;,
+   -wat =&#62; q{
+     (module
+       (func (export &#34;add&#34;) (param i32 i32) (result i32)
+         local.get 0
+         local.get 1
+         i32.add)
+       (func (export &#34;subtract&#34;) (param i32 i32) (result i32)
+         local.get 0
+         local.get 1
+         i32.sub)
+       (memory (export &#34;frooble&#34;) 2 3)
+     )
+   };
+ 
+ 1;</pre>
+
+<p>mathstuff.pl:</p>
+
+<pre class="sh_perl"> use MathStuff qw( add subtract );
+ 
+ print add(1,2), &#34;\n&#34;;      # prints 3
+ print subtract(3,2), &#34;\n&#34;, # prints 1</pre>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="DESCRIPTION"
+>DESCRIPTION</a></h1>
+
+<p><b>WARNING</b>: WebAssembly and Wasmtime are a moving target and the interface for these modules is under active development. Use with caution.</p>
+
+<p>The goal of this project is for Perl and WebAssembly to be able to call each other transparently without having to know or care which module is implemented in which language. Perl subroutines and WebAssembly functions can easily be imported and exported between Perl and WebAssembly (see <a href="/pod/Wasm/Func.html" class="podlinkpod"
+>Wasm::Func</a> for details). WebAssembly global variables can be imported into Perl using tied scalars (see <a href="/pod/Wasm/Global.html" class="podlinkpod"
+>Wasm::Global</a> for details). WebAssembly linear memory can be queried and manipulated by Perl (see <a href="/pod/Wasm/Memory.html" class="podlinkpod"
+>Wasm::Memory</a> for details). Perl can throw or catch traps into or out of WebAssembly (see <a href="/pod/Wasm/Trap.html" class="podlinkpod"
+>Wasm::Trap</a> for details). WebAssembly can optionally be loaded directly by Perl without writing any Perl wrappers at all (see <a href="/pod/Wasm/Hook.html" class="podlinkpod"
+>Wasm::Hook</a> for details).</p>
+
+<p>The example above shows WebAssembly Text (WAT) inlined into the Perl code for readability. In most cases you will want to compile your WebAssembly from a higher level language (Rust, C, Go, etc.), and install it alongside your Perl Module (.pm file) and use the <code>-self</code> option below. That is for <code>lib/Math.pm</code> you would install the Wasm file into <code>lib/Math.wasm</code>, and use the <code>-self</code> option.</p>
+
+<p>Modules using <a href="/pod/Wasm.html" class="podlinkpod"
+>Wasm</a> can optionally use <a href="https://metacpan.org/pod/Exporter" class="podlinkpod"
+>Exporter</a> to export WebAssembly functions into other modules. Using <code>-export &#39;ok&#39;</code> functions can be imported from a calling module on requests. <code>-export &#39;all&#39;</code> will export all exported functions by default.</p>
+
+<p>The current implementation uses <a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a>, which is itself based on the Rust project Wasmtime. This module doesn&#39;t expose the <a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a> interface, and implementation could be changed in the future.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="OPTIONS"
+>OPTIONS</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="-api"
+>-api</a></h2>
+
+<pre class="sh_perl"> use Wasm -api =&#62; 0;</pre>
+
+<p>As of this writing, since the API is subject to change, this must be provided and set to <code>0</code>.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="-exporter"
+>-exporter</a></h2>
+
+<pre class="sh_perl"> use Wasm -api =&#62; 0, -exporter =&#62; &#39;all&#39;;
+ use Wasm -api =&#62; 0, -exporter =&#62; &#39;ok&#39;;</pre>
+
+<p>Configure the caller as an <a href="https://metacpan.org/pod/Exporter" class="podlinkpod"
+>Exporter</a>, with all the functions in the WebAssembly either <code>@EXPORT</code> (<code>all</code>) or <code>@EXPORT_OK</code> (<code>ok</code>).</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="-file"
+>-file</a></h2>
+
+<pre class="sh_perl"> use Wasm -api =&#62; 0, -file =&#62; $file;</pre>
+
+<p>Path to a WebAssembly file in either WebAssembly Text (.wat) or WebAssembly binary (.wasm) format.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="-global"
+>-global</a></h2>
+
+<pre class="sh_perl"> use Wasm -api =&#62; 0, -global =&#62; [ $name, $type, $mutability, $init ];</pre>
+
+<p>Creates a global variable for the calling Pure-Perl module that can be imported into WebAssembly. If you use this option you cannot specify the <code>-wat</code> or <code>-file</code> or <code>-self</code> options. For a detailed example see <a href="/pod/Wasm/Global.html" class="podlinkpod"
+>Wasm::Global</a>.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="-package"
+>-package</a></h2>
+
+<pre class="sh_perl"> use Wasm -api =&#62; 0, -package =&#62; $package;</pre>
+
+<p>Install subroutines in to <code>$package</code> namespace instead of the calling namespace.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="-self"
+>-self</a></h2>
+
+<pre class="sh_perl"> use Wasm -api =&#62; 0, -self;</pre>
+
+<p>Look for a WebAssembly Text (.wat) or WebAssembly binary (.wasm) file with the same base name as the Perl source this is called from.</p>
+
+<p>For example if you are calling this from <code>lib/Foo/Bar.pm</code>, it will look for <code>lib/Foo/Bar.wat</code> and <code>lib/Foo/Bar.wasm</code>. If both exist, then it will use the newer of the two.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="-wat"
+>-wat</a></h2>
+
+<pre class="sh_perl"> use Wasm -api =&#62; 0, -wat =&#62; $wat;</pre>
+
+<p>String containing WebAssembly Text (WAT). Helpful for inline WebAssembly inside your Perl source file.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="GLOBALS"
+>GLOBALS</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="%Wasm::WASM"
+>%Wasm::WASM</a></h2>
+
+<p>This hash maps the Wasm module names to the files from which the Wasm was loaded. It is roughly analogous to the <code>%INC</code> hash in Perl.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="CAVEATS"
+>CAVEATS</a></h1>
+
+<p>As mentioned before as of this writing this dist is a work in progress. I won&#39;t intentionally break stuff without a compelling reason, but practicality may demand it in some situations.</p>
+
+<p>This interface is implemented using the bundled <a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a> family of modules, which depends on the Wasmtime project.</p>
+
+<p>The default way of handling out-of-bounds memory errors is to allocate large <code>PROT_NONE</code> pages at startup. While these pages do not consume many resources in practice (at least in the way that they are used by Wasmtime), they can cause out-of-memory errors on Linux systems with virtual memory limits (<code>ulimit -v</code> in the <code>bash</code> shell). Similar techniques are common in other modern programming languages, and this is more a limitation of the Linux kernel than anything else. Setting the limits on the virtual memory address size probably doesn&#39;t do what you think it is doing and you are probably better off finding a way to place limits on process memory.</p>
+
+<p>However, as a workaround for environments that choose to set a virtual memory address size limit anyway, Wasmtime provides configurations to not allocate the large <code>PROT_NONE</code> pages at some performance cost. The testing plugin <a href="/pod/Test2/Plugin/Wasm.html" class="podlinkpod"
+>Test2::Plugin::Wasm</a> tries to detect environments that have the virtual memory address size limits and sets this configuration for you. For production you can set the environment variable <code>PERL_WASM_WASMTIME_MEMORY</code> to tune the appropriate memory settings exactly as you want to (see the environment section of <a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a>).</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SEE_ALSO"
+>SEE ALSO</a></h1>
+
+<dl>
+<dt><a name="Wasm::Func"
+><a href="/pod/Wasm/Func.html" class="podlinkpod"
+>Wasm::Func</a></a></dt>
+
+<dd>
+<p>Interface to WebAssembly functions from Perl, and Perl subroutines from WebAssembly.</p>
+
+<dt><a name="Wasm::Global"
+><a href="/pod/Wasm/Global.html" class="podlinkpod"
+>Wasm::Global</a></a></dt>
+
+<dd>
+<p>Interface to WebAssembly globals from Perl, and Perl globals from WebAssembly.</p>
+
+<dt><a name="Wasm::Memory"
+><a href="/pod/Wasm/Memory.html" class="podlinkpod"
+>Wasm::Memory</a></a></dt>
+
+<dd>
+<p>Interface to WebAssembly memory from Perl.</p>
+
+<dt><a name="Wasm::Trap"
+><a href="/pod/Wasm/Trap.html" class="podlinkpod"
+>Wasm::Trap</a></a></dt>
+
+<dd>
+<p>Interface to WebAssembly traps.</p>
+
+<dt><a name="plasm"
+><a href="/pod/plasm.html" class="podlinkpod"
+>plasm</a></a></dt>
+
+<dd>
+<p>Perl WebAssembly command line tool. Run WebAssembly programs from the command line, or dump their export/import interfaces.</p>
+
+<dt><a name="Wasm::Wasmtime"
+><a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a></a></dt>
+
+<dd>
+<p>Low level interface to <code>wasmtime</code>.</p>
+
+<dt><a name="Wasm::Hook"
+><a href="/pod/Wasm/Hook.html" class="podlinkpod"
+>Wasm::Hook</a></a></dt>
+
+<dd>
+<p>Load WebAssembly modules as though they were Perl modules.</p>
+</dd>
+</dl>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="AUTHOR"
+>AUTHOR</a></h1>
+
+<p>Graham Ollis &#60;plicease@cpan.org&#62;</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="COPYRIGHT_AND_LICENSE"
+>COPYRIGHT AND LICENSE</a></h1>
+
+<p>This software is copyright (c) 2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+    <div class="nx-footer">
+      <p>Copyright &copy; 2022 Graham Ollis</p>
+    </div>
+  </body>
+</html>

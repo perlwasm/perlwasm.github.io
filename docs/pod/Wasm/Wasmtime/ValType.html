@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wasm::Wasmtime::ValType</title>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/sh_main.min.js"></script>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/lang/sh_perl.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://shjs.wdlabs.com/css/sh_acid.css">
+    <link type="text/css" rel="stylesheet" href="/css/default.css">
+  </head>
+  <body onload="sh_highlightDocument();">
+    <div class="nx-header-flag-1"></div>
+    <div class="nx-header-flag-2"></div>
+    <div class="nx-header-title"><a href="/">🌻</a> <a href="/pod/">📖</a> <a href="/pod/Wasm.html">Wasm</a>::<a href="/pod/Wasm/Wasmtime.html">Wasmtime</a>::ValType</div>
+    <!--Wasm::Wasmtime::ValType--><a name='___top' class='dummyTopAnchor' ></a>
+
+<div class='indexgroup'>
+<ul   class='indexList indexList1'>
+  <li class='indexItem indexItem1'><a href='#NAME'>NAME</a>
+  <li class='indexItem indexItem1'><a href='#VERSION'>VERSION</a>
+  <li class='indexItem indexItem1'><a href='#SYNOPSIS'>SYNOPSIS</a>
+  <li class='indexItem indexItem1'><a href='#DESCRIPTION'>DESCRIPTION</a>
+  <li class='indexItem indexItem1'><a href='#CONSTRUCTOR'>CONSTRUCTOR</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#new'>new</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#METHODS'>METHODS</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#kind'>kind</a>
+    <li class='indexItem indexItem2'><a href='#kind_num'>kind_num</a>
+    <li class='indexItem indexItem2'><a href='#to_string'>to_string</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
+  <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
+  <li class='indexItem indexItem1'><a href='#COPYRIGHT_AND_LICENSE'>COPYRIGHT AND LICENSE</a>
+</ul>
+</div>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="NAME"
+>NAME</a></h1>
+
+<p>Wasm::Wasmtime::ValType - Wasmtime value type class</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="VERSION"
+>VERSION</a></h1>
+
+<p>version 0.21</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SYNOPSIS"
+>SYNOPSIS</a></h1>
+
+<pre class="sh_perl"> use Wasm::Wasmtime;
+ 
+ my $valtype = Wasm::Wasmtime::ValType-&#62;new(&#39;i32&#39;);</pre>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="DESCRIPTION"
+>DESCRIPTION</a></h1>
+
+<p><b>WARNING</b>: WebAssembly and Wasmtime are a moving target and the interface for these modules is under active development. Use with caution.</p>
+
+<p>This class represents a Wasm type.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="CONSTRUCTOR"
+>CONSTRUCTOR</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="new"
+>new</a></h2>
+
+<pre class="sh_perl"> my $valtype = Wasm::Wasmtime::ValType-&#62;new($type);</pre>
+
+<p>Creates a new value type instance. Acceptable values for <code>$type</code> are:</p>
+
+<dl>
+<dt><a name="i32"
+><code>i32</code></a></dt>
+
+<dd>
+<p>Signed 32 bit integer.</p>
+
+<dt><a name="i64"
+><code>i64</code></a></dt>
+
+<dd>
+<p>Signed 64 bit integer.</p>
+
+<dt><a name="f32"
+><code>f32</code></a></dt>
+
+<dd>
+<p>Floating point.</p>
+
+<dt><a name="f64"
+><code>f64</code></a></dt>
+
+<dd>
+<p>Double precision floating point.</p>
+
+<dt><a name="anyref"
+><code>anyref</code></a></dt>
+
+<dd>
+<p>A pointer.</p>
+
+<dt><a name="funcref"
+><code>funcref</code></a></dt>
+
+<dd>
+<p>A function pointer.</p>
+</dd>
+</dl>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="METHODS"
+>METHODS</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="kind"
+>kind</a></h2>
+
+<pre class="sh_perl"> my $kind = $valtype-&#62;kind;</pre>
+
+<p>Returns the value type as a string (ie <code>i32</code>).</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="kind_num"
+>kind_num</a></h2>
+
+<pre class="sh_perl"> my $kind = $valtype-&#62;kind_num;</pre>
+
+<p>Returns the number used internally to represent the type.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="to_string"
+>to_string</a></h2>
+
+<pre class="sh_perl"> my $string = $valtype-&#62;to_string;</pre>
+
+<p>Converts the type into a string for diagnostics. For this class, this does the same thing as the kind method.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SEE_ALSO"
+>SEE ALSO</a></h1>
+
+<dl>
+<dt><a name="Wasm"
+><a href="/pod/Wasm.html" class="podlinkpod"
+>Wasm</a></a></dt>
+
+<dd>
+<dt><a name="Wasm::Wasmtime"
+><a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a></a></dt>
+</dl>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="AUTHOR"
+>AUTHOR</a></h1>
+
+<p>Graham Ollis &#60;plicease@cpan.org&#62;</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="COPYRIGHT_AND_LICENSE"
+>COPYRIGHT AND LICENSE</a></h1>
+
+<p>This software is copyright (c) 2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+    <div class="nx-footer">
+      <p>Copyright &copy; 2022 Graham Ollis</p>
+    </div>
+  </body>
+</html>

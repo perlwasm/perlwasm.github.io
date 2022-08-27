@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wasm::Global</title>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/sh_main.min.js"></script>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/lang/sh_perl.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://shjs.wdlabs.com/css/sh_acid.css">
+    <link type="text/css" rel="stylesheet" href="/css/default.css">
+  </head>
+  <body onload="sh_highlightDocument();">
+    <div class="nx-header-flag-1"></div>
+    <div class="nx-header-flag-2"></div>
+    <div class="nx-header-title"><a href="/">🌻</a> <a href="/pod/">📖</a> <a href="/pod/Wasm.html">Wasm</a>::Global</div>
+    <!--Wasm::Global--><a name='___top' class='dummyTopAnchor' ></a>
+
+<div class='indexgroup'>
+<ul   class='indexList indexList1'>
+  <li class='indexItem indexItem1'><a href='#NAME'>NAME</a>
+  <li class='indexItem indexItem1'><a href='#VERSION'>VERSION</a>
+  <li class='indexItem indexItem1'><a href='#SYNOPSIS'>SYNOPSIS</a>
+  <li class='indexItem indexItem1'><a href='#DESCRIPTION'>DESCRIPTION</a>
+  <li class='indexItem indexItem1'><a href='#CAVEATS'>CAVEATS</a>
+  <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
+  <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
+  <li class='indexItem indexItem1'><a href='#COPYRIGHT_AND_LICENSE'>COPYRIGHT AND LICENSE</a>
+</ul>
+</div>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="NAME"
+>NAME</a></h1>
+
+<p>Wasm::Global - Interface to WebAssembly global variables</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="VERSION"
+>VERSION</a></h1>
+
+<p>version 0.21</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SYNOPSIS"
+>SYNOPSIS</a></h1>
+
+<p>Import globals into Perl from WebAssembly</p>
+
+<pre class="sh_perl"> use Wasm
+   -api =&#62; 0,
+   -wat =&#62; q{
+     (module
+       (global (export &#34;global&#34;) (mut i32) (i32.const 42))
+     )
+   }
+ ;
+ 
+ print &#34;$global\n&#34;;  # 42
+ $global = 99;
+ print &#34;$global\n&#34;;  # 99</pre>
+
+<p>Import globals from Perl into WebAssembly</p>
+
+<pre class="sh_perl"> package Foo;
+ 
+ use Wasm
+   -api    =&#62; 0,
+   -global =&#62; [
+     &#39;foo&#39;,  # name
+     &#39;i32&#39;,  # type
+     &#39;var&#39;,  # mutability
+     42,     # initial value
+   ]
+ ;
+ 
+ package Bar;
+ 
+ use Wasm
+   -api      =&#62; 0,
+   -wat      =&#62; q{
+     (module
+       (global $foo (import &#34;Foo&#34; &#34;foo&#34;) (mut i32))
+       (func (export &#34;get_foo&#34;) (result i32)
+         (global.get $foo))
+       (func (export &#34;inc_foo&#34;)
+         (global.set $foo
+           (i32.add (global.get $foo) (i32.const 1))))
+     )
+   }
+ ;
+ 
+ package main;
+ 
+ print Bar::get_foo(), &#34;\n&#34;;   # 42
+ Bar::inc_foo();
+ print Bar::get_foo(), &#34;\n&#34;;   # 43
+ $Foo::foo = 0;
+ print Bar::get_foo(), &#34;\n&#34;;   # 0</pre>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="DESCRIPTION"
+>DESCRIPTION</a></h1>
+
+<p><b>WARNING</b>: WebAssembly and Wasmtime are a moving target and the interface for these modules is under active development. Use with caution.</p>
+
+<p>This documents the interface to global variables for <a href="/pod/Wasm.html" class="podlinkpod"
+>Wasm</a>. Each global variable exported from WebAssembly is automatically imported into Perl space as a tied scalar, which allows you to get and set the variable easily from Perl. Going the other way requires a bit more boilerplate, but is almost as easy. Using the <code>-global</code> option on the <a href="/pod/Wasm.html" class="podlinkpod"
+>Wasm</a> module, you can define global variables in Pure Perl modules that can be imported into WebAssembly from Perl.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="CAVEATS"
+>CAVEATS</a></h1>
+
+<p>Note that depending on the storage of the global variable setting might be lossy and round-trip isn&#39;t guaranteed. For example for integer types, if you set a string value it will be converted to an integer using the normal Perl string to integer conversion, and when it comes back you will just have the integer value.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SEE_ALSO"
+>SEE ALSO</a></h1>
+
+<dl>
+<dt><a name="Wasm"
+><a href="/pod/Wasm.html" class="podlinkpod"
+>Wasm</a></a></dt>
+</dl>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="AUTHOR"
+>AUTHOR</a></h1>
+
+<p>Graham Ollis &#60;plicease@cpan.org&#62;</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="COPYRIGHT_AND_LICENSE"
+>COPYRIGHT AND LICENSE</a></h1>
+
+<p>This software is copyright (c) 2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+    <div class="nx-footer">
+      <p>Copyright &copy; 2022 Graham Ollis</p>
+    </div>
+  </body>
+</html>

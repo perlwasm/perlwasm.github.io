@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Wasm::Wasmtime::WasiConfig</title>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/sh_main.min.js"></script>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/lang/sh_perl.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://shjs.wdlabs.com/css/sh_acid.css">
+    <link type="text/css" rel="stylesheet" href="/css/default.css">
+  </head>
+  <body onload="sh_highlightDocument();">
+    <div class="nx-header-flag-1"></div>
+    <div class="nx-header-flag-2"></div>
+    <div class="nx-header-title"><a href="/">🌻</a> <a href="/pod/">📖</a> <a href="/pod/Wasm.html">Wasm</a>::<a href="/pod/Wasm/Wasmtime.html">Wasmtime</a>::WasiConfig</div>
+    <!--Wasm::Wasmtime::WasiConfig--><a name='___top' class='dummyTopAnchor' ></a>
+
+<div class='indexgroup'>
+<ul   class='indexList indexList1'>
+  <li class='indexItem indexItem1'><a href='#NAME'>NAME</a>
+  <li class='indexItem indexItem1'><a href='#VERSION'>VERSION</a>
+  <li class='indexItem indexItem1'><a href='#SYNOPSIS'>SYNOPSIS</a>
+  <li class='indexItem indexItem1'><a href='#DESCRIPTION'>DESCRIPTION</a>
+  <li class='indexItem indexItem1'><a href='#CONSTRUCTOR'>CONSTRUCTOR</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#new'>new</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#METHODS'>METHODS</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#set_argv'>set_argv</a>
+    <li class='indexItem indexItem2'><a href='#inherit_argv'>inherit_argv</a>
+    <li class='indexItem indexItem2'><a href='#set_env'>set_env</a>
+    <li class='indexItem indexItem2'><a href='#inherit_env'>inherit_env</a>
+    <li class='indexItem indexItem2'><a href='#set_stdin_file'>set_stdin_file</a>
+    <li class='indexItem indexItem2'><a href='#inherit_stdin'>inherit_stdin</a>
+    <li class='indexItem indexItem2'><a href='#set_stdout_file'>set_stdout_file</a>
+    <li class='indexItem indexItem2'><a href='#inherit_stdout'>inherit_stdout</a>
+    <li class='indexItem indexItem2'><a href='#set_stderr_file'>set_stderr_file</a>
+    <li class='indexItem indexItem2'><a href='#inherit_stderr'>inherit_stderr</a>
+    <li class='indexItem indexItem2'><a href='#preopen_dir'>preopen_dir</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
+  <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
+  <li class='indexItem indexItem1'><a href='#COPYRIGHT_AND_LICENSE'>COPYRIGHT AND LICENSE</a>
+</ul>
+</div>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="NAME"
+>NAME</a></h1>
+
+<p>Wasm::Wasmtime::WasiConfig - WASI Configuration</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="VERSION"
+>VERSION</a></h1>
+
+<p>version 0.21</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SYNOPSIS"
+>SYNOPSIS</a></h1>
+
+<pre class="sh_perl"> use Wasm::Wasmtime;
+ 
+ my $store = Wasm::Wasmtime::Store-&#62;new;
+ my $config = Wasm::Wasmtime::WasiConfig-&#62;new;
+ 
+ # inherit everything, and provide access to the
+ # host filesystem under /host (yikes!)
+ $config-&#62;inherit_argv
+        -&#62;inherit_env
+        -&#62;inherit_stdin
+        -&#62;inherit_stdout
+        -&#62;inherit_stderr
+        -&#62;preopen_dir(&#34;/&#34;, &#34;/host&#34;);
+ 
+ my $wasi = Wasm::Wasmtime::WasiInstance-&#62;new(
+   $store,
+   &#34;wasi_snapshot_preview1&#34;,
+   $config,
+ );</pre>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="DESCRIPTION"
+>DESCRIPTION</a></h1>
+
+<p><b>WARNING</b>: WebAssembly and Wasmtime are a moving target and the interface for these modules is under active development. Use with caution.</p>
+
+<p>This class represents the WebAssembly System Interface (WASI) configuration. For WebAssembly WASI is the equivalent to the part of libc that interfaces with the system. As such it allows you to configure if and how the WebAssembly program has access to program arguments, environment, standard streams and file system directories.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="CONSTRUCTOR"
+>CONSTRUCTOR</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="new"
+>new</a></h2>
+
+<pre class="sh_perl"> my $config = Wasm::Wasmtime::WasiConfig-&#62;new;</pre>
+
+<p>Creates a new WASI config object.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="METHODS"
+>METHODS</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="set_argv"
+>set_argv</a></h2>
+
+<pre class="sh_perl"> $config-&#62;set_argv(@argv);</pre>
+
+<p>Sets the program arguments.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="inherit_argv"
+>inherit_argv</a></h2>
+
+<pre class="sh_perl"> $config-&#62;inherit_argv;</pre>
+
+<p>Configures WASI to use the host program&#39;s arguments.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="set_env"
+>set_env</a></h2>
+
+<pre class="sh_perl"> $config-&#62;set_env(\%env);</pre>
+
+<p>Sets the program environment variables.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="inherit_env"
+>inherit_env</a></h2>
+
+<pre class="sh_perl"> $config-&#62;inherit_env;</pre>
+
+<p>Configures WASI to use the host program&#39;s environment variables.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="set_stdin_file"
+>set_stdin_file</a></h2>
+
+<pre class="sh_perl"> $config-&#62;set_stdin_file($path);</pre>
+
+<p>Sets the program standard input to use the given file path.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="inherit_stdin"
+>inherit_stdin</a></h2>
+
+<pre class="sh_perl"> $config-&#62;inherit_stdin;</pre>
+
+<p>Configures WASI to use the host program&#39;s standard input.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="set_stdout_file"
+>set_stdout_file</a></h2>
+
+<pre class="sh_perl"> $config-&#62;set_stdout_file($path);</pre>
+
+<p>Sets the program standard output to use the given file path.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="inherit_stdout"
+>inherit_stdout</a></h2>
+
+<pre class="sh_perl"> $config-&#62;inherit_stdout;</pre>
+
+<p>Configures WASI to use the host program&#39;s standard output.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="set_stderr_file"
+>set_stderr_file</a></h2>
+
+<pre class="sh_perl"> $config-&#62;set_stderr_file($path);</pre>
+
+<p>Sets the program standard error to use the given file path.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="inherit_stderr"
+>inherit_stderr</a></h2>
+
+<pre class="sh_perl"> $config-&#62;inherit_stderr;</pre>
+
+<p>Configures WASI to use the host program&#39;s standard error.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="preopen_dir"
+>preopen_dir</a></h2>
+
+<pre class="sh_perl"> $config-&#62;preopen_dir($host_path, $guest_path);</pre>
+
+<p>Pre-open the given directory from the host&#39;s <code>$host_path</code> to the guest&#39;s <code>$guest_path</code>.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SEE_ALSO"
+>SEE ALSO</a></h1>
+
+<dl>
+<dt><a name="Wasm"
+><a href="/pod/Wasm.html" class="podlinkpod"
+>Wasm</a></a></dt>
+
+<dd>
+<dt><a name="Wasm::Wasmtime"
+><a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a></a></dt>
+</dl>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="AUTHOR"
+>AUTHOR</a></h1>
+
+<p>Graham Ollis &#60;plicease@cpan.org&#62;</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="COPYRIGHT_AND_LICENSE"
+>COPYRIGHT AND LICENSE</a></h1>
+
+<p>This software is copyright (c) 2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+    <div class="nx-footer">
+      <p>Copyright &copy; 2022 Graham Ollis</p>
+    </div>
+  </body>
+</html>

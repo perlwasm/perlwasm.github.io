@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>plasm</title>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/sh_main.min.js"></script>
+    <script type="text/javascript" src="https://shjs.wdlabs.com/lang/sh_perl.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://shjs.wdlabs.com/css/sh_acid.css">
+    <link type="text/css" rel="stylesheet" href="/css/default.css">
+  </head>
+  <body onload="sh_highlightDocument();">
+    <div class="nx-header-flag-1"></div>
+    <div class="nx-header-flag-2"></div>
+    <div class="nx-header-title"><a href="/">🌻</a> <a href="/pod/">📖</a> plasm</div>
+    <!--plasm--><a name='___top' class='dummyTopAnchor' ></a>
+
+<div class='indexgroup'>
+<ul   class='indexList indexList1'>
+  <li class='indexItem indexItem1'><a href='#NAME'>NAME</a>
+  <li class='indexItem indexItem1'><a href='#VERSION'>VERSION</a>
+  <li class='indexItem indexItem1'><a href='#SYNOPSIS'>SYNOPSIS</a>
+  <li class='indexItem indexItem1'><a href='#DESCRIPTION'>DESCRIPTION</a>
+  <li class='indexItem indexItem1'><a href='#SUBCOMMANDS'>SUBCOMMANDS</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#run'>run</a>
+    <li class='indexItem indexItem2'><a href='#dump'>dump</a>
+    <li class='indexItem indexItem2'><a href='#wat'>wat</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
+  <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
+  <li class='indexItem indexItem1'><a href='#COPYRIGHT_AND_LICENSE'>COPYRIGHT AND LICENSE</a>
+</ul>
+</div>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="NAME"
+>NAME</a></h1>
+
+<p>plasm - Perl WebAssembly command line tool</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="VERSION"
+>VERSION</a></h1>
+
+<p>version 0.03</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SYNOPSIS"
+>SYNOPSIS</a></h1>
+
+<pre class="sh_perl"> % plasm run program.wasm [ arguments ]
+ % plasm dump program.wasm
+ % plasm --help
+ % plasm --version</pre>
+
+<p>For full documentation:</p>
+
+<pre class="sh_perl"> % perldoc plasm</pre>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="DESCRIPTION"
+>DESCRIPTION</a></h1>
+
+<p><code>plasm</code> is the Perl WebAssembly command line tool.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SUBCOMMANDS"
+>SUBCOMMANDS</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="run"
+>run</a></h2>
+
+<pre class="sh_perl"> % plasm run program.wasm [ arguments ]
+ % plasm run --help</pre>
+
+<p>Runs the given WebAssembly program. The arguments after <code>program.wasm</code> are passed on to the WebAssembly program.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="dump"
+>dump</a></h2>
+
+<pre class="sh_perl"> % plasm dump program.wasm
+ % plasm dump --help</pre>
+
+<p>Dumps the import and exports of the given WebAssembly module.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="wat"
+>wat</a></h2>
+
+<pre class="sh_perl"> % plasm wat program.wat
+ % plasm wat --help</pre>
+
+<p>Converts WebAssembly Text (.wat) to WebAssembly Binary (.wasm) using wasmtime&#39;s <code>wat2wasm</code> function.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="SEE_ALSO"
+>SEE ALSO</a></h1>
+
+<dl>
+<dt><a name="Wasm"
+><a href="/pod/Wasm.html" class="podlinkpod"
+>Wasm</a></a></dt>
+
+<dd>
+<p>Write Perl extensions using Wasm!</p>
+
+<dt><a name="Wasm::Wasmtime"
+><a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a></a></dt>
+
+<dd>
+<p>Low-level Wasmtime bindings for Perl.</p>
+</dd>
+</dl>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="AUTHOR"
+>AUTHOR</a></h1>
+
+<p>Graham Ollis &#60;plicease@cpan.org&#62;</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="COPYRIGHT_AND_LICENSE"
+>COPYRIGHT AND LICENSE</a></h1>
+
+<p>This software is copyright (c) 2020 by Graham Ollis.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
+
+
+    <div class="nx-footer">
+      <p>Copyright &copy; 2022 Graham Ollis</p>
+    </div>
+  </body>
+</html>
