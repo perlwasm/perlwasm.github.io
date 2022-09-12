@@ -1,4 +1,4 @@
-# Home Page of the Perl Wasm Project
+# Home of the Perl Wasm Project
 
 The goal of the Perl Wasm project is for Perl and WebAssembly to be able to call each other transparently
 without having to know or care which module is implemented ion which langauge.  Using M<Wasm>, Perl
