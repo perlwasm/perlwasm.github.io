@@ -42,6 +42,8 @@
     <li class='indexItem indexItem2'><a href='#profiler'>profiler</a>
     <li class='indexItem indexItem2'><a href='#cache_config_load'>cache_config_load</a>
     <li class='indexItem indexItem2'><a href='#cache_config_default'>cache_config_default</a>
+    <li class='indexItem indexItem2'><a href='#consume_fuel'>consume_fuel</a>
+    <li class='indexItem indexItem2'><a href='#max_instances'>max_instances</a>
   </ul>
   <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
   <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
@@ -59,7 +61,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.21</p>
+<p>version 0.22</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -288,6 +290,22 @@ name="cache_config_default"
 
 <p>Enable the default caching configuration.</p>
 
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="consume_fuel"
+>consume_fuel</a></h2>
+
+<pre class="sh_perl"> $config-&#62;consume_fuel($bool);</pre>
+
+<p>Whether or not fuel is enabled for generated code.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="max_instances"
+>max_instances</a></h2>
+
+<pre class="sh_perl"> $confog-&#62;max_instances($size);</pre>
+
+<p>Configures the maximum number of instances that can be created.</p>
+
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SEE_ALSO"
 >SEE ALSO</a></h1>
@@ -313,7 +331,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 
