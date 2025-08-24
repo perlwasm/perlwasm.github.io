@@ -1,5 +1,14 @@
 # Home of the Perl Wasm Project
 
+As of August 2025, work on M<Wasm> and M<Wasm::Wasmtime> has stalled, in the meantime.  Checkout these modules
+which have more recent releases:
+
+* M<Wasm::Wasm3>
+* M<Wasm::Wasmer>
+* M<Extism>
+
+What follows is the original description of the project:
+
 The goal of the Perl Wasm project is for Perl and WebAssembly to be able to call each other transparently
 without having to know or care which module is implemented ion which langauge.  Using M<Wasm>, Perl
 subroutines and WebAssembly functions can easily be imported and exported between both Perl and WebAssembly.
