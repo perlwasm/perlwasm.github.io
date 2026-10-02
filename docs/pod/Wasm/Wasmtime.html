@@ -22,6 +22,7 @@
   <li class='indexItem indexItem1'><a href='#DESCRIPTION'>DESCRIPTION</a>
   <li class='indexItem indexItem1'><a href='#ENVIRONMENT'>ENVIRONMENT</a>
   <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#WASM_WASMTIME_FFI'>WASM_WASMTIME_FFI</a>
     <li class='indexItem indexItem2'><a href='#PERL_WASM_WASMTIME_MEMORY'>PERL_WASM_WASMTIME_MEMORY</a>
   </ul>
   <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
@@ -40,7 +41,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -132,10 +133,16 @@ name="ENVIRONMENT"
 >ENVIRONMENT</a></h1>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
+name="WASM_WASMTIME_FFI"
+>WASM_WASMTIME_FFI</a></h2>
+
+<p>The full path to the <code>wasmtime</code> shared library (<em>libwasmtime.so</em>, <em>libwasmtime.dylib</em> or <em>wasmtime.dll</em>). This must currently be set; a modern <code>wasmtime</code> (developed against 48.0.1) is required.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
 name="PERL_WASM_WASMTIME_MEMORY"
 >PERL_WASM_WASMTIME_MEMORY</a></h2>
 
-<p>This environment variable, if set, should be a colon separated list of values for <code>static_memory_maximum_size</code>, <code>static_memory_guard_size</code> and <code>dynamic_memory_guard_size</code>. See <a href="/pod/Wasm/Wasmtime/Config.html" class="podlinkpod"
+<p>This environment variable, if set, should be a colon separated pair of values for <code>memory_reservation</code> and <code>memory_guard_size</code>. See <a href="/pod/Wasm/Wasmtime/Config.html" class="podlinkpod"
 >Wasm::Wasmtime::Config</a> for more details on these limits.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
@@ -185,12 +192,12 @@ name="SEE_ALSO"
 <dd>
 <p>Tool to convert WebAssembly Text (WAT) to WebAssembly binary (Wasm).</p>
 
-<dt><a name="Wasm::Wasmtime::WasiInstance"
-><a href="/pod/Wasm/Wasmtime/WasiInstance.html" class="podlinkpod"
->Wasm::Wasmtime::WasiInstance</a></a></dt>
+<dt><a name="Wasm::Wasmtime::WasiConfig"
+><a href="/pod/Wasm/Wasmtime/WasiConfig.html" class="podlinkpod"
+>Wasm::Wasmtime::WasiConfig</a></a></dt>
 
 <dd>
-<p>WebAssembly System Interface (WASI).</p>
+<p>WebAssembly System Interface (WASI) configuration.</p>
 
 <dt><a name="https://github.com/bytecodealliance/wasmtime"
 ><a href="https://github.com/bytecodealliance/wasmtime" class="podlinkurl"
@@ -218,7 +225,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

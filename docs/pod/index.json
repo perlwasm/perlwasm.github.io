@@ -165,10 +165,6 @@
             "name" : "Wasm::Wasmtime::WasiConfig"
          },
          {
-            "href" : "/pod/Wasm/Wasmtime/WasiInstance.html",
-            "name" : "Wasm::Wasmtime::WasiInstance"
-         },
-         {
             "href" : "/pod/Wasm/Wasmtime/Wat2Wasm.html",
             "name" : "Wasm::Wasmtime::Wat2Wasm"
          }

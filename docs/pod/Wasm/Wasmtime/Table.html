@@ -20,10 +20,16 @@
   <li class='indexItem indexItem1'><a href='#VERSION'>VERSION</a>
   <li class='indexItem indexItem1'><a href='#SYNOPSIS'>SYNOPSIS</a>
   <li class='indexItem indexItem1'><a href='#DESCRIPTION'>DESCRIPTION</a>
+  <li class='indexItem indexItem1'><a href='#CONSTRUCTOR'>CONSTRUCTOR</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#new'>new</a>
+  </ul>
   <li class='indexItem indexItem1'><a href='#METHODS'>METHODS</a>
   <ul   class='indexList indexList2'>
     <li class='indexItem indexItem2'><a href='#type'>type</a>
     <li class='indexItem indexItem2'><a href='#size'>size</a>
+    <li class='indexItem indexItem2'><a href='#get'>get</a>
+    <li class='indexItem indexItem2'><a href='#grow'>grow</a>
   </ul>
   <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
   <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
@@ -41,7 +47,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -71,6 +77,24 @@ name="DESCRIPTION"
 
 <p>This class represents a WebAssembly table object.</p>
 
+<p>Note that Perl-space marshalling of <code>funcref</code> / <code>externref</code> table elements is limited; <a href="#get" class="podlinkpod"
+>&#34;get&#34;</a> currently returns <code>undef</code> for reference values.</p>
+
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="CONSTRUCTOR"
+>CONSTRUCTOR</a></h1>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="new"
+>new</a></h2>
+
+<pre class="sh_perl"> my $table = Wasm::Wasmtime::Table-&#62;new(
+   $store,       # Wasm::Wasmtime::Store
+   $tabletype,   # Wasm::Wasmtime::TableType
+ );</pre>
+
+<p>Creates a new table whose elements are initialized to null.</p>
+
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="METHODS"
 >METHODS</a></h1>
@@ -90,7 +114,23 @@ name="size"
 
 <pre class="sh_perl"> my $size = $table-&#62;size;</pre>
 
-<p>Returns the size of the table.</p>
+<p>Returns the size of the table in elements.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="get"
+>get</a></h2>
+
+<pre class="sh_perl"> my $value = $table-&#62;get($index);</pre>
+
+<p>Returns the value at <code>$index</code>, or <code>undef</code> if the index is out of bounds (or the element is a reference value that cannot be represented in Perl).</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="grow"
+>grow</a></h2>
+
+<pre class="sh_perl"> my $bool = $table-&#62;grow($delta);</pre>
+
+<p>Grows the table by <code>$delta</code> null elements. Returns true on success.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SEE_ALSO"
@@ -117,7 +157,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

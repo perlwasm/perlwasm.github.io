@@ -47,7 +47,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -85,6 +85,7 @@ name="new"
 <pre class="sh_perl"> my $global = Wasm::Wasmtime::Global-&#62;new(
    $store,      # Wasm::Wasmtime::Store
    $globaltype, # Wasm::Wasmtime::GlobalType
+   $value,      # initial value
  );</pre>
 
 <p>Creates a new global object.</p>
@@ -114,7 +115,7 @@ name="get"
 name="set"
 >set</a></h2>
 
-<pre class="sh_perl"> my $global-&#62;set($value);</pre>
+<pre class="sh_perl"> $global-&#62;set($value);</pre>
 
 <p>Sets the global to the given value.</p>
 
@@ -151,7 +152,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

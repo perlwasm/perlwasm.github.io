@@ -23,11 +23,13 @@
   <li class='indexItem indexItem1'><a href='#CONSTRUCTORS'>CONSTRUCTORS</a>
   <ul   class='indexList indexList2'>
     <li class='indexItem indexItem2'><a href='#new'>new</a>
+    <li class='indexItem indexItem2'><a href='#from_error'>from_error</a>
   </ul>
   <li class='indexItem indexItem1'><a href='#METHODS'>METHODS</a>
   <ul   class='indexList indexList2'>
     <li class='indexItem indexItem2'><a href='#message'>message</a>
     <li class='indexItem indexItem2'><a href='#exit_status'>exit_status</a>
+    <li class='indexItem indexItem2'><a href='#code'>code</a>
   </ul>
   <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
   <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
@@ -45,7 +47,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -75,12 +77,19 @@ name="CONSTRUCTORS"
 name="new"
 >new</a></h2>
 
-<pre class="sh_perl"> my $trap = Wasm::Wasmtime::Trap-&#62;new(
-   $store,    # Wasm::Wasmtime::Store
-   $message,  # Null terminated string
- );</pre>
+<pre class="sh_perl"> my $trap = Wasm::Wasmtime::Trap-&#62;new($message);
+ my $trap = Wasm::Wasmtime::Trap-&#62;new($store, $message);  # $store is ignored</pre>
 
-<p>Create a trap instance. <code>$message</code> MUST be null terminated.</p>
+<p>Create a trap instance. In the modern Wasmtime API traps are not associated with a store, so the <code>$store</code> argument (if given, for backwards compatibility) is ignored.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="from_error"
+>from_error</a></h2>
+
+<pre class="sh_perl"> my $trap = Wasm::Wasmtime::Trap-&#62;from_error($error);</pre>
+
+<p>Creates a trap from a <a href="https://metacpan.org/pod/Wasm%3A%3AWasmtime%3A%3AError" class="podlinkpod"
+>Wasm::Wasmtime::Error</a>, carrying over its message and (if present) its WASI exit status.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="METHODS"
@@ -100,7 +109,16 @@ name="exit_status"
 
 <pre class="sh_perl"> my $status = $trap-&#62;exit_status;</pre>
 
-<p>If the trap was triggered by an <code>exit</code> call, this will return the exist status code. If it wasn&#39;t triggered by an <code>exit</code> call it will return <code>undef</code>.</p>
+<p>If the trap was triggered by an <code>exit</code> call this returns the exit status code, otherwise <code>undef</code>. In the modern Wasmtime API exit status is carried by the error rather than the trap, so this is populated by <a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a> when it converts an error into a trap and is <code>undef</code> otherwise.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="code"
+>code</a></h2>
+
+<pre class="sh_perl"> my $code = $trap-&#62;code;</pre>
+
+<p>Returns the numeric instruction trap code, or <code>undef</code> if this is not an instruction trap.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SEE_ALSO"
@@ -127,7 +145,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

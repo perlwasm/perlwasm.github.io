@@ -54,7 +54,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -74,11 +74,8 @@ name="SYNOPSIS"
         -&#62;inherit_stderr
         -&#62;preopen_dir(&#34;/&#34;, &#34;/host&#34;);
  
- my $wasi = Wasm::Wasmtime::WasiInstance-&#62;new(
-   $store,
-   &#34;wasi_snapshot_preview1&#34;,
-   $config,
- );</pre>
+ # Apply the WASI configuration to the store (this consumes $config).
+ $store-&#62;set_wasi($config);</pre>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="DESCRIPTION"
@@ -86,7 +83,9 @@ name="DESCRIPTION"
 
 <p><b>WARNING</b>: WebAssembly and Wasmtime are a moving target and the interface for these modules is under active development. Use with caution.</p>
 
-<p>This class represents the WebAssembly System Interface (WASI) configuration. For WebAssembly WASI is the equivalent to the part of libc that interfaces with the system. As such it allows you to configure if and how the WebAssembly program has access to program arguments, environment, standard streams and file system directories.</p>
+<p>This class represents the WebAssembly System Interface (WASI) configuration.</p>
+
+<p>To apply a WASI configuration, pass it to <code>$store-&#62;set_wasi($config)</code> (which consumes it) and define the WASI imports on a linker with <code>$linker-&#62;define_wasi</code>.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="CONSTRUCTOR"
@@ -110,31 +109,22 @@ name="set_argv"
 
 <pre class="sh_perl"> $config-&#62;set_argv(@argv);</pre>
 
-<p>Sets the program arguments.</p>
-
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="inherit_argv"
 >inherit_argv</a></h2>
 
 <pre class="sh_perl"> $config-&#62;inherit_argv;</pre>
 
-<p>Configures WASI to use the host program&#39;s arguments.</p>
-
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="set_env"
 >set_env</a></h2>
 
-<pre class="sh_perl"> $config-&#62;set_env(\%env);</pre>
-
-<p>Sets the program environment variables.</p>
+<pre class="sh_perl"> $config-&#62;set_env(\%env);
+ $config-&#62;set_env(%env);</pre>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="inherit_env"
 >inherit_env</a></h2>
-
-<pre class="sh_perl"> $config-&#62;inherit_env;</pre>
-
-<p>Configures WASI to use the host program&#39;s environment variables.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="set_stdin_file"
@@ -142,15 +132,9 @@ name="set_stdin_file"
 
 <pre class="sh_perl"> $config-&#62;set_stdin_file($path);</pre>
 
-<p>Sets the program standard input to use the given file path.</p>
-
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="inherit_stdin"
 >inherit_stdin</a></h2>
-
-<pre class="sh_perl"> $config-&#62;inherit_stdin;</pre>
-
-<p>Configures WASI to use the host program&#39;s standard input.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="set_stdout_file"
@@ -158,15 +142,9 @@ name="set_stdout_file"
 
 <pre class="sh_perl"> $config-&#62;set_stdout_file($path);</pre>
 
-<p>Sets the program standard output to use the given file path.</p>
-
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="inherit_stdout"
 >inherit_stdout</a></h2>
-
-<pre class="sh_perl"> $config-&#62;inherit_stdout;</pre>
-
-<p>Configures WASI to use the host program&#39;s standard output.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="set_stderr_file"
@@ -174,23 +152,18 @@ name="set_stderr_file"
 
 <pre class="sh_perl"> $config-&#62;set_stderr_file($path);</pre>
 
-<p>Sets the program standard error to use the given file path.</p>
-
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="inherit_stderr"
 >inherit_stderr</a></h2>
-
-<pre class="sh_perl"> $config-&#62;inherit_stderr;</pre>
-
-<p>Configures WASI to use the host program&#39;s standard error.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="preopen_dir"
 >preopen_dir</a></h2>
 
-<pre class="sh_perl"> $config-&#62;preopen_dir($host_path, $guest_path);</pre>
+<pre class="sh_perl"> $config-&#62;preopen_dir($host_path, $guest_path);
+ $config-&#62;preopen_dir($host_path, $guest_path, $fs_mutable);</pre>
 
-<p>Pre-open the given directory from the host&#39;s <code>$host_path</code> to the guest&#39;s <code>$guest_path</code>.</p>
+<p>Pre-open <code>$host_path</code> from the host, visible to the guest as <code>$guest_path</code>. <code>$fs_mutable</code> (default true) controls whether the guest may modify the filesystem under that path.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SEE_ALSO"
@@ -217,7 +190,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

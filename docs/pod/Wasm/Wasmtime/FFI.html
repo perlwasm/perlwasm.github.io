@@ -37,7 +37,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -53,6 +53,10 @@ name="DESCRIPTION"
 
 <p>This is a private class used internally by <a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
 >Wasm::Wasmtime</a> classes.</p>
+
+<p>As of this writing this module targets the modern <code>wasmtime</code> C API (the <code>wasmtime_context_t</code> / <code>wasmtime_store_t</code> based interface), and was developed against Wasmtime 48.0.1. The old <code>wasm-c-api</code> object model (pre-1.0 Wasmtime) is no longer supported.</p>
+
+<p>The location of the Wasmtime shared library must currently be provided via the <code>WASM_WASMTIME_FFI</code> environment variable (the full path to <em>libwasmtime.so</em>, <em>libwasmtime.dylib</em> or <em>wasmtime.dll</em>).</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SEE_ALSO"
@@ -94,7 +98,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

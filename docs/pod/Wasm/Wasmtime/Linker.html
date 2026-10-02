@@ -51,7 +51,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -62,15 +62,13 @@ name="SYNOPSIS"
  my $store  = Wasm::Wasmtime::Store-&#62;new;
  my $linker = Wasm::Wasmtime::Linker-&#62;new($store);
  
- # Instanciate and define a WASI instance
- my $wasi = Wasm::Wasmtime::WasiInstance-&#62;new(
-   $store,
-   &#34;wasi_snapshot_preview1&#34;,
+ # Configure WASI on the store and define the WASI imports in the linker
+ $store-&#62;set_wasi(
    Wasm::Wasmtime::WasiConfig
      -&#62;new
      -&#62;inherit_stdout
  );
- $linker-&#62;define_wasi($wasi);
+ $linker-&#62;define_wasi;
  
  # Create a logger module + instance
  my $logger = $linker-&#62;instantiate(
@@ -166,60 +164,46 @@ name="allow_shadowing"
 
 <pre class="sh_perl"> $linker-&#62;allow_shadowing($bool);</pre>
 
-<p>Sets the allow shadowing property.</p>
-
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="define"
 >define</a></h2>
 
-<pre class="sh_perl"> $linker-&#62;define(
-   $module,
-   $name,
-   $extern,    # Wasm::Wasmtime::Extern
- );</pre>
+<pre class="sh_perl"> $linker-&#62;define($module, $name, $extern);</pre>
 
-<p>Define the given extern. You can use a func, global, table or memory object in its place and this method will get the extern for you.</p>
+<p>Define the given extern (a <a href="/pod/Wasm/Wasmtime/Func.html" class="podlinkpod"
+>Wasm::Wasmtime::Func</a>, <code>::Memory</code>, <code>::Global</code> or <code>::Table</code>).</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="define_wasi"
 >define_wasi</a></h2>
 
-<pre class="sh_perl"> $linker-&#62;define_wasi(
-   $wasi,   # Wasm::Wasmtime::WasiInstance
- );</pre>
+<pre class="sh_perl"> $linker-&#62;define_wasi;</pre>
 
-<p>Define WASI instance.</p>
+<p>Define the WASI imports in this linker. The WASI state itself must be configured on the store with <code>$store-&#62;set_wasi($wasi_config)</code>. Any argument is accepted and ignored for backwards compatibility.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="define_instance"
 >define_instance</a></h2>
 
-<pre class="sh_perl"> $linker-&#62;define_instance(
-   $name,       # string
-   $instance,   # Wasm::Wasmtime::Instance
- );</pre>
-
-<p>Define WebAssembly instance.</p>
+<pre class="sh_perl"> $linker-&#62;define_instance($name, $instance);</pre>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="instantiate"
 >instantiate</a></h2>
 
-<pre class="sh_perl"> my $instance = $linker-&#62;instantiate(
-   $module,
- );</pre>
+<pre class="sh_perl"> my $instance = $linker-&#62;instantiate($module);</pre>
 
-<p>Instantiate the module using the linker. Returns the new <a href="/pod/Wasm/Wasmtime/Instance.html" class="podlinkpod"
->Wasm::Wasmtime::Instance</a> object.</p>
+<p>Instantiate the module using the linker. Returns a <a href="/pod/Wasm/Wasmtime/Instance.html" class="podlinkpod"
+>Wasm::Wasmtime::Instance</a>.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="get_one_by_name"
 >get_one_by_name</a></h2>
 
-<pre class="sh_perl"> my $extern = $linker-&#62;get_one_by_name($module,$name);</pre>
+<pre class="sh_perl"> my $extern = $linker-&#62;get_one_by_name($module, $name);</pre>
 
 <p>Returns the <a href="/pod/Wasm/Wasmtime/Extern.html" class="podlinkpod"
->Wasm::Wasmtime::Extern</a> for the given <code>$module</code> and <code>$name</code>. <code>undef</code> is returned if there is no such extern with that <code>$name</code>.</p>
+>Wasm::Wasmtime::Extern</a> for the given <code>$module</code> and <code>$name</code>. Throws an exception if there is no such item.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="get_default"
@@ -227,7 +211,7 @@ name="get_default"
 
 <pre class="sh_perl"> my $func = $linker-&#62;get_default($name);</pre>
 
-<p>Acquires the &#34;default export&#34; of the named module in this linker. Returns a <a href="/pod/Wasm/Wasmtime/Func.html" class="podlinkpod"
+<p>Acquires the &#34;default export&#34; of the named module. Returns a <a href="/pod/Wasm/Wasmtime/Func.html" class="podlinkpod"
 >Wasm::Wasmtime::Func</a>.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
@@ -264,7 +248,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

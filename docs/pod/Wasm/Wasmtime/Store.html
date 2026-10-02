@@ -23,8 +23,15 @@
   <li class='indexItem indexItem1'><a href='#CONSTRUCTOR'>CONSTRUCTOR</a>
   <ul   class='indexList indexList2'>
     <li class='indexItem indexItem2'><a href='#new'>new</a>
-    <li class='indexItem indexItem2'><a href='#gc'>gc</a>
+  </ul>
+  <li class='indexItem indexItem1'><a href='#METHODS'>METHODS</a>
+  <ul   class='indexList indexList2'>
+    <li class='indexItem indexItem2'><a href='#context'>context</a>
     <li class='indexItem indexItem2'><a href='#engine'>engine</a>
+    <li class='indexItem indexItem2'><a href='#gc'>gc</a>
+    <li class='indexItem indexItem2'><a href='#set_fuel'>set_fuel</a>
+    <li class='indexItem indexItem2'><a href='#get_fuel'>get_fuel</a>
+    <li class='indexItem indexItem2'><a href='#set_wasi'>set_wasi</a>
   </ul>
   <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
   <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
@@ -42,7 +49,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -58,7 +65,9 @@ name="DESCRIPTION"
 
 <p><b>WARNING</b>: WebAssembly and Wasmtime are a moving target and the interface for these modules is under active development. Use with caution.</p>
 
-<p>This class represents storage used by the WebAssembly engine.</p>
+<p>This class represents storage used by the WebAssembly engine. In the modern Wasmtime C API almost every operation on a live WebAssembly object (function, memory, global, table, instance) is performed relative to a store, via its <code>wasmtime_context_t</code>. The <a href="#context" class="podlinkpod"
+>&#34;context&#34;</a> method exposes that pointer for internal use by the other <a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a> classes.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="CONSTRUCTOR"
@@ -76,13 +85,18 @@ name="new"
 <p>Creates a new storage instance. If the optional <a href="/pod/Wasm/Wasmtime/Engine.html" class="podlinkpod"
 >Wasm::Wasmtime::Engine</a> object isn&#39;t provided, then a new one will be created.</p>
 
+<h1><a class='u' href='#___top' title='click to go to top of document'
+name="METHODS"
+>METHODS</a></h1>
+
 <h2><a class='u' href='#___top' title='click to go to top of document'
-name="gc"
->gc</a></h2>
+name="context"
+>context</a></h2>
 
-<pre class="sh_perl"> $store-&#62;gc;</pre>
+<pre class="sh_perl"> my $context = $store-&#62;context;</pre>
 
-<p>Garbage collects <code>externref</code>s that are used within this store. Any <code>externref</code>s that are discovered to be unreachable by other code or objects will have their finalizers run.</p>
+<p>Returns the <code>wasmtime_context_t</code> pointer (an <code>opaque</code>) for this store. This is primarily for internal use by other <a href="/pod/Wasm/Wasmtime.html" class="podlinkpod"
+>Wasm::Wasmtime</a> classes.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="engine"
@@ -92,6 +106,39 @@ name="engine"
 
 <p>Returns the <a href="/pod/Wasm/Wasmtime/Engine.html" class="podlinkpod"
 >Wasm::Wasmtime::Engine</a> object for this storage object.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="gc"
+>gc</a></h2>
+
+<pre class="sh_perl"> $store-&#62;gc;</pre>
+
+<p>Garbage collects <code>externref</code>s that are used within this store.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="set_fuel"
+>set_fuel</a></h2>
+
+<pre class="sh_perl"> $store-&#62;set_fuel($fuel);</pre>
+
+<p>Sets the amount of fuel available for WebAssembly to consume while executing. Requires that the engine was configured with <code>$config-&#62;consume_fuel(1)</code>.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="get_fuel"
+>get_fuel</a></h2>
+
+<pre class="sh_perl"> my $fuel = $store-&#62;get_fuel;</pre>
+
+<p>Returns the amount of fuel remaining in this store.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="set_wasi"
+>set_wasi</a></h2>
+
+<pre class="sh_perl"> $store-&#62;set_wasi($wasi_config);</pre>
+
+<p>Configures the WASI state for instances created within this store. Takes ownership of the <a href="/pod/Wasm/Wasmtime/WasiConfig.html" class="podlinkpod"
+>Wasm::Wasmtime::WasiConfig</a> object (it must not be used afterwards).</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SEE_ALSO"
@@ -118,7 +165,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

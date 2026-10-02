@@ -27,6 +27,8 @@
   <li class='indexItem indexItem1'><a href='#METHODS'>METHODS</a>
   <ul   class='indexList indexList2'>
     <li class='indexItem indexItem2'><a href='#module'>module</a>
+    <li class='indexItem indexItem2'><a href='#store'>store</a>
+    <li class='indexItem indexItem2'><a href='#context'>context</a>
     <li class='indexItem indexItem2'><a href='#exports'>exports</a>
   </ul>
   <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
@@ -45,7 +47,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -81,31 +83,10 @@ name="new"
  my $instance = Wasm::Wasmtime::Instance-&#62;new(
    $module,    # Wasm::Wasmtime::Module
    $store,     # Wasm::Wasmtime::Store
-   \@imports,  # array reference of Wasm::Wasmtime::Extern
+   \@imports,  # array reference of Wasm::Wasmtime::Extern (or shortcuts)
  );</pre>
 
-<p>Create a new instance of the instance class. <code>@imports</code> should match the imports specified by <code>$module</code>. You can use a few shortcuts when specifying imports:</p>
-
-<dl>
-<dt><a name="code_reference"
->code reference</a></dt>
-
-<dd>
-<p>For a function import, you can provide a plan Perl subroutine, since we can determine the function signature from the <code>$module</code>.</p>
-
-<dt><a name="scalar_reference"
->scalar reference</a></dt>
-
-<dd>
-<p>For a memory import, a memory object will be created and the referred scalar will be set to it.</p>
-
-<dt><a name="undef"
-><code>undef</code></a></dt>
-
-<dd>
-<p>For a memory import, a memory object will be created. You won&#39;t be able to access it from Perl space, but at least it won&#39;t die.</p>
-</dd>
-</dl>
+<p>Create a new instance. <code>@imports</code> should match the imports specified by <code>$module</code>. Shortcuts: a plain code reference for a function import, a scalar reference or <code>undef</code> for a memory import.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="METHODS"
@@ -121,13 +102,30 @@ name="module"
 >Wasm::Wasmtime::Module</a> for this instance.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
+name="store"
+>store</a></h2>
+
+<pre class="sh_perl"> my $store = $instance-&#62;store;</pre>
+
+<p>Returns the <a href="/pod/Wasm/Wasmtime/Store.html" class="podlinkpod"
+>Wasm::Wasmtime::Store</a> for this instance.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="context"
+>context</a></h2>
+
+<pre class="sh_perl"> my $context = $instance-&#62;context;</pre>
+
+<p>Returns the <code>wasmtime_context_t</code> pointer for this instance&#39;s store (internal use).</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
 name="exports"
 >exports</a></h2>
 
 <pre class="sh_perl"> my $exports = $instance-&#62;exports;</pre>
 
-<p>Returns the <a href="Wasm:Wasmtime::Instance::Exports" class="podlinkurl"
->Wasm:Wasmtime::Instance::Exports</a> object for this instance. This can be used to query and call exports from the instance.</p>
+<p>Returns the <a href="/pod/Wasm/Wasmtime/Instance/Exports.html" class="podlinkpod"
+>Wasm::Wasmtime::Instance::Exports</a> object for this instance.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SEE_ALSO"
@@ -154,7 +152,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

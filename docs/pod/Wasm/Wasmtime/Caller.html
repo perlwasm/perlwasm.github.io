@@ -27,6 +27,7 @@
   <li class='indexItem indexItem1'><a href='#METHODS'>METHODS</a>
   <ul   class='indexList indexList2'>
     <li class='indexItem indexItem2'><a href='#export_get'>export_get</a>
+    <li class='indexItem indexItem2'><a href='#store'>store</a>
   </ul>
   <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
   <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
@@ -44,7 +45,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -56,8 +57,8 @@ name="SYNOPSIS"
  {
    # this just uses Platypus to create a utility function
    # to convert a pointer to a C string into a Perl string.
-   use FFI::Platypus 1.00;
-   my $ffi = FFI::Platypus-&#62;new( api =&#62; 1 );
+   use FFI::Platypus 2.00;
+   my $ffi = FFI::Platypus-&#62;new( api =&#62; 2 );
    $ffi-&#62;attach_cast( &#39;cstring&#39; =&#62; &#39;opaque&#39; =&#62; &#39;string&#39; );
  }
  
@@ -93,9 +94,7 @@ name="DESCRIPTION"
 >DESCRIPTION</a></h1>
 
 <p>This class represents the caller&#39;s context when calling a Perl <a href="/pod/Wasm/Wasmtime/Func.html" class="podlinkpod"
->Wasm::Wasmtime::Func</a> from WebAssembly. The primary purpose of this structure is to provide access to the caller&#39;s exported memory. This allows functions which take pointers as arguments to easily read the memory the pointers point into.</p>
-
-<p>This is intended to be a pretty temporary mechanism for accessing the Caller&#39;s memory until interface types has been fully standardized and implemented.</p>
+>Wasm::Wasmtime::Func</a> from WebAssembly. The primary purpose of this structure is to provide access to the caller&#39;s exported memory.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="FUNCTIONS"
@@ -108,11 +107,10 @@ name="wasmtime_caller"
 <pre class="sh_perl"> my $caller = wasmtime_caller;
  my $caller = wasmtime_caller $index;</pre>
 
-<p>This returns the current caller context (an instance of <a href="/pod/Wasm/Wasmtime/Caller.html" class="podlinkpod"
->Wasm::Wasmtime::Caller</a>). If the current Perl code wasn&#39;t called from WebAssembly, then it will return <code>undef</code>. If <code>$index</code> is given, then that indicates how many WebAssembly call frames to go back before the current one. (This is vaguely similar to how the Perl <code>caller</code> function works).</p>
+<p>Returns the current caller context (an instance of <a href="/pod/Wasm/Wasmtime/Caller.html" class="podlinkpod"
+>Wasm::Wasmtime::Caller</a>), or <code>undef</code> if the current Perl code wasn&#39;t called from WebAssembly. <code>$index</code> indicates how many WebAssembly call frames to go back.</p>
 
-<p>This function is exported by default using <a href="https://metacpan.org/pod/Exporter" class="podlinkpod"
->Exporter</a>.</p>
+<p>This function is exported by default.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="METHODS"
@@ -125,8 +123,17 @@ name="export_get"
 <pre class="sh_perl"> my $extern = $caller-&#62;export_get($name);</pre>
 
 <p>Returns the <a href="/pod/Wasm/Wasmtime/Extern.html" class="podlinkpod"
->Wasm::Wasmtime::Extern</a> for the named export <code>$name</code>. As of this writing, only <a href="/pod/Wasm/Wasmtime/Memory.html" class="podlinkpod"
->Wasm::Wasmtime::Memory</a> types are supported.</p>
+>Wasm::Wasmtime::Extern</a> for the named export <code>$name</code>. As of this writing only <a href="/pod/Wasm/Wasmtime/Memory.html" class="podlinkpod"
+>Wasm::Wasmtime::Memory</a> exports are supported by Wasmtime here.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="store"
+>store</a></h2>
+
+<pre class="sh_perl"> my $store = $caller-&#62;store;</pre>
+
+<p>Returns the <a href="/pod/Wasm/Wasmtime/Store.html" class="podlinkpod"
+>Wasm::Wasmtime::Store</a> the caller belongs to.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SEE_ALSO"
@@ -153,7 +160,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

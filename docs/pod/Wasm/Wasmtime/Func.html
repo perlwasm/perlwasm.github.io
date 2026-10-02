@@ -48,7 +48,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -132,9 +132,7 @@ name="call"
 <pre class="sh_perl"> my @results = $func-&#62;call(@params);
  my @results = $func-&#62;(@params);</pre>
 
-<p>Calls the function instance. This can be used to call either Perl functions created with <code>new</code> as above, or call WebAssembly functions from Perl. As a convenience you can call the function by using the function instance like a code reference.</p>
-
-<p>If there is a trap during the call it will throw an exception. In list context all of the results are returned as a list. In scalar context just the first result (if any) is returned.</p>
+<p>Calls the function instance. If there is a trap during the call it will throw an exception. In list context all of the results are returned as a list. In scalar context just the first result (if any) is returned.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="attach"
@@ -166,7 +164,7 @@ name="param_arity"
 name="result_arity"
 >result_arity</a></h2>
 
-<pre class="sh_perl"> my $num = $func-&#62;param_arity;</pre>
+<pre class="sh_perl"> my $num = $func-&#62;result_arity;</pre>
 
 <p>Returns the number of results the function returns.</p>
 
@@ -195,7 +193,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

@@ -27,23 +27,21 @@
   <li class='indexItem indexItem1'><a href='#METHODS'>METHODS</a>
   <ul   class='indexList indexList2'>
     <li class='indexItem indexItem2'><a href='#debug_info'>debug_info</a>
-    <li class='indexItem indexItem2'><a href='#interruptable'>interruptable</a>
+    <li class='indexItem indexItem2'><a href='#epoch_interruption'>epoch_interruption</a>
+    <li class='indexItem indexItem2'><a href='#consume_fuel'>consume_fuel</a>
     <li class='indexItem indexItem2'><a href='#max_wasm_stack'>max_wasm_stack</a>
     <li class='indexItem indexItem2'><a href='#wasm_threads'>wasm_threads</a>
     <li class='indexItem indexItem2'><a href='#wasm_reference_types'>wasm_reference_types</a>
     <li class='indexItem indexItem2'><a href='#wasm_simd'>wasm_simd</a>
     <li class='indexItem indexItem2'><a href='#wasm_bulk_memory'>wasm_bulk_memory</a>
     <li class='indexItem indexItem2'><a href='#wasm_multi_value'>wasm_multi_value</a>
-    <li class='indexItem indexItem2'><a href='#static_memory_maximum_size'>static_memory_maximum_size</a>
-    <li class='indexItem indexItem2'><a href='#static_memory_guard_size'>static_memory_guard_size</a>
-    <li class='indexItem indexItem2'><a href='#dynamic_memory_guard_size'>dynamic_memory_guard_size</a>
+    <li class='indexItem indexItem2'><a href='#memory_reservation'>memory_reservation</a>
+    <li class='indexItem indexItem2'><a href='#memory_guard_size'>memory_guard_size</a>
     <li class='indexItem indexItem2'><a href='#strategy'>strategy</a>
     <li class='indexItem indexItem2'><a href='#cranelift_opt_level'>cranelift_opt_level</a>
     <li class='indexItem indexItem2'><a href='#profiler'>profiler</a>
     <li class='indexItem indexItem2'><a href='#cache_config_load'>cache_config_load</a>
     <li class='indexItem indexItem2'><a href='#cache_config_default'>cache_config_default</a>
-    <li class='indexItem indexItem2'><a href='#consume_fuel'>consume_fuel</a>
-    <li class='indexItem indexItem2'><a href='#max_instances'>max_instances</a>
   </ul>
   <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
   <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
@@ -61,7 +59,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -107,12 +105,20 @@ name="debug_info"
 <p>Configures whether DWARF debug information is emitted for the generated code. This can improve profiling and the debugging experience.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
-name="interruptable"
->interruptable</a></h2>
+name="epoch_interruption"
+>epoch_interruption</a></h2>
 
-<pre class="sh_perl"> $config-&#62;interruptable($bool);</pre>
+<pre class="sh_perl"> $config-&#62;epoch_interruption($bool);</pre>
 
-<p>Configures whether functions and loops will be interruptable.</p>
+<p>Configures whether execution of WebAssembly will &#34;yield&#34; when a deadline is reached. This replaces the old (removed) <code>interruptable</code> configuration.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="consume_fuel"
+>consume_fuel</a></h2>
+
+<pre class="sh_perl"> $config-&#62;consume_fuel($bool);</pre>
+
+<p>Whether or not fuel is enabled for generated code. When enabled a store must be given fuel with <code>$store-&#62;set_fuel</code> before WebAssembly can execute.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="max_wasm_stack"
@@ -178,28 +184,21 @@ name="wasm_multi_value"
 >https://github.com/webassembly/multi-value</a></p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
-name="static_memory_maximum_size"
->static_memory_maximum_size</a></h2>
+name="memory_reservation"
+>memory_reservation</a></h2>
 
-<pre class="sh_perl"> $config-&#62;static_memory_maximum_size($size);</pre>
+<pre class="sh_perl"> $config-&#62;memory_reservation($size);</pre>
 
-<p>Configure the static memory maximum size.</p>
-
-<h2><a class='u' href='#___top' title='click to go to top of document'
-name="static_memory_guard_size"
->static_memory_guard_size</a></h2>
-
-<pre class="sh_perl"> $config-&#62;static_memory_guard_size($size);</pre>
-
-<p>Configure the static memory guard size.</p>
+<p>Configures the size, in bytes, of virtual memory reservation for each linear memory. Setting this (and <a href="#memory_guard_size" class="podlinkpod"
+>&#34;memory_guard_size&#34;</a>) to <code>0</code> disables the large <code>PROT_NONE</code> reservations that can trip <code>ulimit -v</code> limits. Replaces the old (removed) <code>static_memory_maximum_size</code>.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
-name="dynamic_memory_guard_size"
->dynamic_memory_guard_size</a></h2>
+name="memory_guard_size"
+>memory_guard_size</a></h2>
 
-<pre class="sh_perl"> $config-&#62;dynamic_memory_guard_size($size);</pre>
+<pre class="sh_perl"> $config-&#62;memory_guard_size($size);</pre>
 
-<p>Configure the dynamic memory guard size.</p>
+<p>Configures the size, in bytes, of the guard region placed after each linear memory. Replaces the old (removed) <code>static_memory_guard_size</code> / <code>dynamic_memory_guard_size</code>.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="strategy"
@@ -208,8 +207,6 @@ name="strategy"
 <pre class="sh_perl"> $config-&#62;strategy($strategy);</pre>
 
 <p>Configures the compilation strategy used for wasm code.</p>
-
-<p>Will throw an exception if the selected strategy is not supported on your platform.</p>
 
 <p>Acceptable values for <code>$strategy</code> are:</p>
 
@@ -222,8 +219,8 @@ name="strategy"
 ><code>cranelift</code></a></dt>
 
 <dd>
-<dt><a name="lightbeam"
-><code>lightbeam</code></a></dt>
+<dt><a name="winch"
+><code>winch</code></a></dt>
 </dl>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
@@ -257,8 +254,6 @@ name="profiler"
 
 <p>Configure the profiler.</p>
 
-<p>Will throw an exception if the selected profiler is not supported on your platform.</p>
-
 <p>Acceptable values for <code>$profiler</code> are:</p>
 
 <dl>
@@ -272,6 +267,10 @@ name="profiler"
 <dd>
 <dt><a name="vtune"
 ><code>vtune</code></a></dt>
+
+<dd>
+<dt><a name="perfmap"
+><code>perfmap</code></a></dt>
 </dl>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
@@ -289,22 +288,6 @@ name="cache_config_default"
 <pre class="sh_perl"> $config-&#62;cache_config_default;</pre>
 
 <p>Enable the default caching configuration.</p>
-
-<h2><a class='u' href='#___top' title='click to go to top of document'
-name="consume_fuel"
->consume_fuel</a></h2>
-
-<pre class="sh_perl"> $config-&#62;consume_fuel($bool);</pre>
-
-<p>Whether or not fuel is enabled for generated code.</p>
-
-<h2><a class='u' href='#___top' title='click to go to top of document'
-name="max_instances"
->max_instances</a></h2>
-
-<pre class="sh_perl"> $confog-&#62;max_instances($size);</pre>
-
-<p>Configures the maximum number of instances that can be created.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SEE_ALSO"
@@ -331,7 +314,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

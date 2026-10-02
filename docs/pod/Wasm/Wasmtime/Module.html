@@ -50,7 +50,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -77,58 +77,28 @@ name="new"
 >new</a></h2>
 
 <pre class="sh_perl"> my $module = Wasm::Wasmtime::Module-&#62;new(
-   $engine,       # Wasm::Wasmtime::Engine
+   $engine,       # Wasm::Wasmtime::Engine (optional)
    wat =&#62; $wat,   # WebAssembly Text
  );
  my $module = Wasm::Wasmtime::Module-&#62;new(
-   $engine,       # Wasm::Wasmtime::Engine
+   $engine,       # Wasm::Wasmtime::Engine (optional)
    wasm =&#62; $wasm, # WebAssembly binary
  );
  my $module = Wasm::Wasmtime::Module-&#62;new(
-   $engine,       # Wasm::Wasmtime::Engine
-   file =&#62; $path, # Filename containing WebAssembly binary (.wasm) or WebAssembly Text (.wat)
- );
- my $module = Wasm::Wasmtime::Module-&#62;new(
-   wat =&#62; $wat,   # WebAssembly Text
- );
- my $module = Wasm::Wasmtime::Module-&#62;new(
-   wasm =&#62; $wasm, # WebAssembly binary
- );
- my $module = Wasm::Wasmtime::Module-&#62;new(
+   $engine,       # Wasm::Wasmtime::Engine (optional)
    file =&#62; $path, # Filename containing WebAssembly binary (.wasm) or WebAssembly Text (.wat)
  );</pre>
 
-<p>Create a new WebAssembly module object. You must provide either WebAssembly Text (WAT), WebAssembly binary (Wasm), or a filename of a file that contains WebAssembly binary (Wasm). If the optional <a href="/pod/Wasm/Wasmtime/Engine.html" class="podlinkpod"
->Wasm::Wasmtime::Engine</a> object is not provided one will be created for you.</p>
-
-<p>[Deprecated]</p>
-
-<pre class="sh_perl"> my $module = Wasm::Wasmtime::Module-&#62;new(
-   $store,        # Wasm::Wasmtime::Store
-   wat =&#62; $wat,   # WebAssembly Text
- );
- my $module = Wasm::Wasmtime::Module-&#62;new(
-   $store,        # Wasm::Wasmtime::Store
-   wasm =&#62; $wasm, # WebAssembly binary
- );
- my $module = Wasm::Wasmtime::Module-&#62;new(
-   $store,        # Wasm::Wasmtime::Store
-   file =&#62; $path, # Filename containing WebAssembly binary (.wasm) or WebAssembly Text (.wat)
- );</pre>
-
-<p>You can provide a <a href="/pod/Wasm/Wasmtime/Store.html" class="podlinkpod"
->Wasm::Wasmtime::Store</a> instance instead of a <a href="/pod/Wasm/Wasmtime/Engine.html" class="podlinkpod"
->Wasm::Wasmtime::Engine</a>. Although the store instance is no longer required internally to create a module instance, the engine object which is needed can be found from the store. This form will be removed in a future version.</p>
+<p>Create a new WebAssembly module object. You must provide either WebAssembly Text (WAT), WebAssembly binary (Wasm), or a filename of a file that contains WebAssembly binary (Wasm) or text (Wat). If the optional <a href="/pod/Wasm/Wasmtime/Engine.html" class="podlinkpod"
+>Wasm::Wasmtime::Engine</a> object is not provided one will be created for you. A <a href="/pod/Wasm/Wasmtime/Store.html" class="podlinkpod"
+>Wasm::Wasmtime::Store</a> may be passed instead of an engine, in which case its engine is used.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="deserialize"
 >deserialize</a></h2>
 
 <pre class="sh_perl"> my $module = Wasm::Wasmtime::Module-&#62;deserialize(
-   $engine,       # Wasm::Wasmtime::Engine
-   $serialized,   # serialized module
- );
- my $module = Wasm::Wasmtime::Module-&#62;deserialize(
+   $engine,       # Wasm::Wasmtime::Engine (optional)
    $serialized,   # serialized module
  );</pre>
 
@@ -142,29 +112,12 @@ name="METHODS"
 name="validate"
 >validate</a></h2>
 
-<pre class="sh_perl"> my($ok, $mssage) = Wasm::Wasmtime::Module-&#62;validate(
-   $store,        # Wasm::Wasmtime::Store
-   wat =&#62; $wat,   # WebAssembly Text
- );
- my($ok, $mssage) = Wasm::Wasmtime::Module-&#62;validate(
-   $store,        # Wasm::Wasmtime::Store
-   wasm =&#62; $wasm, # WebAssembly binary
- );
- my($ok, $mssage) = Wasm::Wasmtime::Module-&#62;validate(
-   $store,        # Wasm::Wasmtime::Store
-   file =&#62; $path, # Filename containing WebAssembly binary (.wasm)
- );
- my($ok, $mssage) = Wasm::Wasmtime::Module-&#62;validate(
-   wat =&#62; $wat,   # WebAssembly Text
- );
- my($ok, $mssage) = Wasm::Wasmtime::Module-&#62;validate(
-   wasm =&#62; $wasm, # WebAssembly binary
- );
- my($ok, $mssage) = Wasm::Wasmtime::Module-&#62;validate(
-   file =&#62; $path, # Filename containing WebAssembly binary (.wasm)
+<pre class="sh_perl"> my($ok, $message) = Wasm::Wasmtime::Module-&#62;validate(
+   $engine,       # Wasm::Wasmtime::Engine (optional)
+   wat =&#62; $wat,   # or wasm =&#62; $wasm, or file =&#62; $path
  );</pre>
 
-<p>Takes the same arguments as <code>new</code>, but validates the module without creating a module object. Returns <code>$ok</code>, which is true if the WebAssembly is valid, and false otherwise. For invalid WebAssembly <code>$message</code> may contain a useful diagnostic for why it was invalid.</p>
+<p>Takes the same arguments as <code>new</code>, but validates the module without creating a module object.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="exports"
@@ -234,7 +187,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 

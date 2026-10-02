@@ -27,6 +27,10 @@
     <li class='indexItem indexItem2'><a href='#is_global'>is_global</a>
     <li class='indexItem indexItem2'><a href='#is_table'>is_table</a>
     <li class='indexItem indexItem2'><a href='#is_memory'>is_memory</a>
+    <li class='indexItem indexItem2'><a href='#from_extern'>from_extern</a>
+    <li class='indexItem indexItem2'><a href='#store'>store</a>
+    <li class='indexItem indexItem2'><a href='#context'>context</a>
+    <li class='indexItem indexItem2'><a href='#to_extern'>to_extern</a>
   </ul>
   <li class='indexItem indexItem1'><a href='#SEE_ALSO'>SEE ALSO</a>
   <li class='indexItem indexItem1'><a href='#AUTHOR'>AUTHOR</a>
@@ -44,7 +48,7 @@ name="NAME"
 name="VERSION"
 >VERSION</a></h1>
 
-<p>version 0.23</p>
+<p>version 0.24</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SYNOPSIS"
@@ -80,7 +84,12 @@ name="DESCRIPTION"
 >Wasm::Wasmtime::Instance</a>. This class cannot be created independently, but subclasses of this class can be retrieved from the <a href="/pod/Wasm/Wasmtime/Instance.html" class="podlinkpod"
 >Wasm::Wasmtime::Instance</a> object. This is a base class and cannot be instantiated on its own.</p>
 
-<p>It is a base class.</p>
+<p>In the modern Wasmtime C API an &#34;extern&#34; is a small tagged union value (<code>wasmtime_extern_t</code>) rather than a heap object. Each concrete subclass (<a href="/pod/Wasm/Wasmtime/Func.html" class="podlinkpod"
+>Wasm::Wasmtime::Func</a>, <a href="/pod/Wasm/Wasmtime/Memory.html" class="podlinkpod"
+>Wasm::Wasmtime::Memory</a>, <a href="/pod/Wasm/Wasmtime/Global.html" class="podlinkpod"
+>Wasm::Wasmtime::Global</a>, <a href="/pod/Wasm/Wasmtime/Table.html" class="podlinkpod"
+>Wasm::Wasmtime::Table</a>) wraps the corresponding store-handle struct plus a reference to the owning <a href="/pod/Wasm/Wasmtime/Store.html" class="podlinkpod"
+>Wasm::Wasmtime::Store</a>.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="METHODS"
@@ -92,60 +101,62 @@ name="kind"
 
 <pre class="sh_perl"> my $string = $extern-&#62;kind;</pre>
 
-<p>Returns the extern kind as a string. This will be one of:</p>
-
-<dl>
-<dt><a name="func_Wasm::Wasmtime::Func"
-><code>func</code> <a href="/pod/Wasm/Wasmtime/Func.html" class="podlinkpod"
->Wasm::Wasmtime::Func</a></a></dt>
-
-<dd>
-<dt><a name="global_Wasm::Wasmtime::Global"
-><code>global</code> <a href="/pod/Wasm/Wasmtime/Global.html" class="podlinkpod"
->Wasm::Wasmtime::Global</a></a></dt>
-
-<dd>
-<dt><a name="table_Wasm::Wasmtime::Table"
-><code>table</code> <a href="/pod/Wasm/Wasmtime/Table.html" class="podlinkpod"
->Wasm::Wasmtime::Table</a></a></dt>
-
-<dd>
-<dt><a name="memory_Wasm::Wasmtime::Memory"
-><code>memory</code> <a href="/pod/Wasm/Wasmtime/Memory.html" class="podlinkpod"
->Wasm::Wasmtime::Memory</a></a></dt>
-</dl>
+<p>Returns the extern kind as a string: <code>func</code>, <code>global</code>, <code>table</code> or <code>memory</code>.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="is_func"
 >is_func</a></h2>
 
-<pre class="sh_perl"> my $bool = $extern-&#62;is_func;</pre>
-
-<p>Returns true if it is a function.</p>
-
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="is_global"
 >is_global</a></h2>
-
-<pre class="sh_perl"> my $bool = $extern-&#62;is_global;</pre>
-
-<p>Returns true if it is a global.</p>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="is_table"
 >is_table</a></h2>
 
-<pre class="sh_perl"> my $bool = $extern-&#62;is_table;</pre>
-
-<p>Returns true if it is a table.</p>
-
 <h2><a class='u' href='#___top' title='click to go to top of document'
 name="is_memory"
 >is_memory</a></h2>
 
-<pre class="sh_perl"> my $bool = $extern-&#62;is_memory;</pre>
+<p>Return true for the matching kind.</p>
 
-<p>Returns true if it is a memory.</p>
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="from_extern"
+>from_extern</a></h2>
+
+<pre class="sh_perl"> my $obj = Wasm::Wasmtime::Extern-&#62;from_extern($extern_data, $store);</pre>
+
+<p>Internal: given a <code>wasmtime_extern_t</code> struct (a <a href="/pod/Wasm/Wasmtime/FFI.html" class="podlinkpod"
+>Wasm::Wasmtime::FFI</a> <code>Wasm::Wasmtime::ExternData</code>) and the owning <a href="/pod/Wasm/Wasmtime/Store.html" class="podlinkpod"
+>Wasm::Wasmtime::Store</a>, returns a <a href="/pod/Wasm/Wasmtime/Func.html" class="podlinkpod"
+>Wasm::Wasmtime::Func</a>, <code>::Global</code>, <code>::Table</code> or <code>::Memory</code> object holding a private copy of the handle.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="store"
+>store</a></h2>
+
+<pre class="sh_perl"> my $store = $extern-&#62;store;</pre>
+
+<p>Returns the <a href="/pod/Wasm/Wasmtime/Store.html" class="podlinkpod"
+>Wasm::Wasmtime::Store</a> that owns this extern.</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="context"
+>context</a></h2>
+
+<pre class="sh_perl"> my $context = $extern-&#62;context;</pre>
+
+<p>Returns the <code>wasmtime_context_t</code> pointer for this extern&#39;s store (internal use).</p>
+
+<h2><a class='u' href='#___top' title='click to go to top of document'
+name="to_extern"
+>to_extern</a></h2>
+
+<pre class="sh_perl"> my $extern_data = $extern-&#62;to_extern;</pre>
+
+<p>Internal: returns a fresh <a href="/pod/Wasm/Wasmtime/FFI.html" class="podlinkpod"
+>Wasm::Wasmtime::FFI</a> <code>Wasm::Wasmtime::ExternData</code> (a <code>wasmtime_extern_t</code>) populated from this object&#39;s handle, for use as an import or with <code>Wasm::Wasmtime::Linker-&#62;define</code>.</p>
 
 <h1><a class='u' href='#___top' title='click to go to top of document'
 name="SEE_ALSO"
@@ -172,7 +183,7 @@ name="AUTHOR"
 name="COPYRIGHT_AND_LICENSE"
 >COPYRIGHT AND LICENSE</a></h1>
 
-<p>This software is copyright (c) 2020-2022 by Graham Ollis.</p>
+<p>This software is copyright (c) 2020-2026 by Graham Ollis.</p>
 
 <p>This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.</p>
 
